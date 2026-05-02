@@ -142,11 +142,33 @@
   width: 100%;
 }
 
-.form-input:focus {
+.form-input:focus:not(.readonly-field) {
   outline: none;
   border-color: #3b82f6;
   background-color: #fff;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.05);
+}
+
+.readonly-field {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.disabled-field {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 1; /* Override browser default opacity */
+}
+
+.info-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-left: auto;
 }
 
 .form-select {

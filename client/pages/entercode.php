@@ -3,39 +3,40 @@ session_start();
 require_once '../../server/config/database.php';
 
 if (!isset($_SESSION['reset_email'])) {
-    header('Location: forgotpass.php');
-    exit();
+  header('Location: forgotpass.php');
+  exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $enteredCode = trim($_POST['code']);
-    $email = $_SESSION['reset_email'];
-    $role = $_SESSION['reset_role'];
+  $enteredCode = trim($_POST['code']);
+  $email = $_SESSION['reset_email'];
+  $role = $_SESSION['reset_role'];
 
-    try {
-        $database = new Database();
-        $db = $database->getConnection();
+  try {
+    $database = new Database();
+    $db = $database->getConnection();
 
-        $table = ($role === 'student') ? 'students' : 'admin';
-        $stmt = $db->prepare("SELECT reset_code FROM $table WHERE email = ? LIMIT 1");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $table = ($role === 'student') ? 'students' : 'admin';
+    $stmt = $db->prepare("SELECT reset_code FROM $table WHERE email = ? LIMIT 1");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && $enteredCode == $user['reset_code']) {
-            $_SESSION['reset_code_verified'] = true;
-            header('Location: resetpass.php');
-            exit();
-        } else {
-            $_SESSION['error'] = "Invalid verification code. Please try again.";
-        }
-    } catch (Exception $e) {
-        $_SESSION['error'] = "Error: " . $e->getMessage();
+    if ($user && $enteredCode == $user['reset_code']) {
+      $_SESSION['reset_code_verified'] = true;
+      header('Location: resetpass.php');
+      exit();
+    } else {
+      $_SESSION['error'] = "Invalid verification code. Please try again.";
     }
+  } catch (Exception $e) {
+    $_SESSION['error'] = "Error: " . $e->getMessage();
+  }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>SmartQ — Verify Code</title>
   <meta charset="UTF-8">
@@ -65,9 +66,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="auth-alert auth-alert-error">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+            <path
+              d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
           </svg>
-          <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+          <?= htmlspecialchars($_SESSION['error']);
+          unset($_SESSION['error']); ?>
         </div>
       <?php endif; ?>
 
@@ -75,9 +78,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="auth-alert auth-alert-success">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+            <path
+              d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
           </svg>
-          <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
+          <?= htmlspecialchars($_SESSION['success']);
+          unset($_SESSION['success']); ?>
         </div>
       <?php endif; ?>
 
@@ -98,4 +103,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
   </div>
 </body>
+
 </html>

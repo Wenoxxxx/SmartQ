@@ -58,6 +58,7 @@
     topbar: "layout/topbar.php",
     navbar: "layout/navbar.php",
     footer: "layout/footer.php",
+    "mobile-nav": "layout/mobile-nav.php",
 
     /* ── Widgets / Cards ────────── */
     "stat-card": "widgets/stat-card.php",
