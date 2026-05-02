@@ -64,6 +64,8 @@
     "recent-activity": "widgets/recent-activity.php",
     graph: "widgets/graph.php",
     colleges: "widgets/colleges.php",
+    "college-bar-chart": "widgets/college-bar-chart.php",
+    "status-doughnut-chart": "widgets/status-doughnut-chart.php",
 
     // ➕ Add new components here…
   };

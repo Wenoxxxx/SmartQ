@@ -195,14 +195,9 @@ $statuses = $statuses_stmt->fetchAll(PDO::FETCH_ASSOC);
        ============================================= -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="../../scripts/component-loader.js"></script>
+  <script src="../../scripts/chart-widgets.js"></script>
 
   <script>
-    SmartQ.onLoad('sidebar', function ($el) {
-      $(document).on('click', '#sidebar-toggle', function () {
-        $('#sidebar').toggleClass('open');
-      });
-    });
-
     $(document).ready(function () {
       let collegeChart, statusChart;
 
@@ -255,138 +250,20 @@ $statuses = $statuses_stmt->fetchAll(PDO::FETCH_ASSOC);
               }
               $('#preview-body').html(html);
 
-              // Update College Chart (Bar)
-              const collegeCtx = document.getElementById('collegeChart').getContext('2d');
+              // Charts — destroy old instances, create new via shared widget
               if (collegeChart) collegeChart.destroy();
+              collegeChart = SmartQ.charts.createBarChart(
+                'collegeChart',
+                res.charts.college.labels,
+                res.charts.college.data
+              );
 
-              // Color mapping for colleges
-              const collegeColors_bar = {
-                'COT': '#ff7d04',
-                'CON': '#ec57ee',
-                'COB': '#fac800',
-                'COE': '#1c5adf',
-                'CPAG': '#23c7c7',
-                'CAS': '#10b981',
-              };
-
-              const barColors = res.charts.college.labels.map(label => {
-                const normalized = label.trim().toUpperCase();
-                return collegeColors_bar[normalized] || '#2563eb';
-              });
-
-              collegeChart = new Chart(collegeCtx, {
-                type: 'bar',
-                data: {
-                  labels: res.charts.college.labels,
-                  datasets: [{
-                    label: 'Validated Students',
-                    data: res.charts.college.data,
-                    backgroundColor: barColors,
-                    borderRadius: 6
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: { legend: { display: false } },
-                  scales: {
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                    x: { grid: { display: false } }
-                  }
-                }
-              });
-
-              // Update Status Chart (Doughnut)
-              const statusCtx = document.getElementById('statusChart').getContext('2d');
               if (statusChart) statusChart.destroy();
-
-              // Calculate overall validation % for center text
-              const total = res.charts.status.data.reduce((a, b) => a + b, 0);
-              const validatedIndex = res.charts.status.labels.findIndex(l => l.trim().toLowerCase() === 'validated');
-              const validatedCount = validatedIndex !== -1 ? res.charts.status.data[validatedIndex] : 0;
-              const completionRate = total > 0 ? Math.round((validatedCount / total) * 100) : 0;
-
-              // Map colors to labels (Case-insensitive & trimmed)
-              const colorMap = {
-                'validated': '#22c55e',     // Green
-                'pending': '#eab308',       // Yellow
-                'not validated': '#ef4444'  // Red
-              };
-              const statusColors = res.charts.status.labels.map(label => {
-                const normalized = label.trim().toLowerCase();
-                return colorMap[normalized] || '#94a3b8'; // Fallback to gray if no match
-              });
-
-              let activeLabel = "VALIDATED";
-              let activeValue = completionRate;
-
-              statusChart = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                  labels: res.charts.status.labels,
-                  datasets: [{
-                    data: res.charts.status.data,
-                    backgroundColor: statusColors,
-                    borderWidth: 0,
-                    hoverOffset: 10
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  onClick: (evt, elements, chart) => {
-                    if (elements.length > 0) {
-                      const index = elements[0].index;
-                      activeLabel = chart.data.labels[index].trim().toUpperCase();
-                      const val = chart.data.datasets[0].data[index];
-                      activeValue = Math.round((val / total) * 100);
-                    } else {
-                      activeLabel = "VALIDATED";
-                      activeValue = completionRate;
-                    }
-                    chart.draw();
-                  },
-                  plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12, padding: 20, font: { size: 11 } } },
-                    tooltip: {
-                      callbacks: {
-                        label: function (context) {
-                          const label = context.label || '';
-                          const value = context.parsed || 0;
-                          const percentage = Math.round((value / total) * 100);
-                          return `${label}: ${value} (${percentage}%)`;
-                        }
-                      }
-                    }
-                  },
-                  cutout: '75%',
-                },
-                plugins: [{
-                  id: 'centerText',
-                  beforeDraw: function (chart) {
-                    const { ctx, chartArea: { top, bottom, left, right } } = chart;
-                    ctx.save();
-
-                    const centerX = (left + right) / 2;
-                    const centerY = (top + bottom) / 2;
-
-                    // Draw Percentage
-                    const fontSize = (chart.height / 160).toFixed(2);
-                    ctx.font = `700 ${fontSize}em sans-serif`;
-                    ctx.textBaseline = "middle";
-                    ctx.textAlign = "center";
-                    ctx.fillStyle = "#1e293b";
-                    ctx.fillText(activeValue + "%", centerX, centerY + 10);
-
-                    // Draw Label
-                    ctx.font = `600 0.75em sans-serif`;
-                    ctx.fillStyle = "#64748b";
-                    ctx.fillText(activeLabel, centerX, centerY - 15);
-
-                    ctx.restore();
-                  }
-                }]
-              });
+              statusChart = SmartQ.charts.createDoughnutChart(
+                'statusChart',
+                res.charts.status.labels,
+                res.charts.status.data
+              );
             }
           }
         });

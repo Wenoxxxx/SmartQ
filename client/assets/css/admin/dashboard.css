@@ -60,6 +60,12 @@
   padding: 24px 40px;
   overflow: hidden;
   background: transparent;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -182,6 +188,12 @@
   flex-direction: column;
   gap: 16px;
   height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(28, 90, 223, 0.08);
 }
 
 .chart-header {
