@@ -60,14 +60,16 @@ try {
         exit;
     }
 
-    // 2. Check if student already booked for this schedule
-    $query = "SELECT * FROM queue_list WHERE student_id = :sid AND schedule_id = :schid AND deleted_at IS NULL LIMIT 1";
+    // 2. Check if student has ANY active booking
+    $query = "SELECT 1 FROM queue_list ql 
+              JOIN queue_schedule qs ON ql.schedule_id = qs.schedule_id 
+              WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL 
+              LIMIT 1";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':sid', $student_id);
-    $stmt->bindParam(':schid', $schedule_id);
     $stmt->execute();
     if ($stmt->fetch()) {
-        echo json_encode(['success' => false, 'message' => 'You have already booked for this schedule']);
+        echo json_encode(['success' => false, 'message' => 'You already have an active booking and cannot book multiple schedules.']);
         exit;
     }
 

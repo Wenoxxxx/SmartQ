@@ -65,6 +65,7 @@ try {
 
 	// Format validated_at nicely
 	if ($student['validated_at']) {
+		date_default_timezone_set('Asia/Manila');
 		$dt = new DateTime($student['validated_at']);
 		$student['validated_at_formatted'] = $dt->format('F j, Y') . ' at ' . $dt->format('g:i A');
 	} else {

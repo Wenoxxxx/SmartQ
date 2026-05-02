@@ -74,15 +74,17 @@ $user = $_SESSION['student'];
                   </div>
                 </div>';
             } else {
+              $has_active_booking = false;
               // Check if student has ANY active booking
               $active_booking_query = "SELECT 1 FROM queue_list ql 
                                        JOIN queue_schedule qs ON ql.schedule_id = qs.schedule_id 
-                                       WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() 
+                                       WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL
                                        LIMIT 1";
               $ab_stmt = $db->prepare($active_booking_query);
               $ab_stmt->bindParam(':sid', $user['student_id']);
               $ab_stmt->execute();
               if ($ab_stmt->fetch()) {
+                $has_active_booking = true;
                 echo '
                   <div class="booking-alert warning">
                     <div class="alert-icon">
@@ -133,7 +135,7 @@ $user = $_SESSION['student'];
                   $percentage = ($limit > 0) ? ($booked / $limit) * 100 : 0;
 
                   // Check if student already has a booking
-                  $check_query = "SELECT 1 FROM queue_list WHERE student_id = :sid AND schedule_id = :schid";
+                  $check_query = "SELECT 1 FROM queue_list WHERE student_id = :sid AND schedule_id = :schid AND deleted_at IS NULL";
                   $check_stmt = $db->prepare($check_query);
                   $check_stmt->bindParam(':sid', $user['student_id']);
                   $check_stmt->bindParam(':schid', $row['schedule_id']);
@@ -189,6 +191,10 @@ $user = $_SESSION['student'];
                     echo '<button disabled style="width: 100%; background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; padding: 12px; border-radius: 12px; font-weight: 700;">Fully Booked</button>';
                   } elseif ($is_validated) {
                     echo '<button disabled style="width: 100%; background: #f1f5f9; color: #94a3b8; border: none; padding: 12px; border-radius: 12px; font-weight: 700;">Validated</button>';
+                  } elseif ($has_active_booking) {
+                    echo '<button disabled style="width: 100%; background: #fffbeb; color: #d97706; border: 1px solid #fde68a; padding: 12px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            Limit Reached
+                          </button>';
                   } else {
                     echo '<button class="btn-book-now" data-id="' . $row['schedule_id'] . '" style="width: 100%; background: var(--student-primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
                             Book This Slot

@@ -52,7 +52,8 @@ try {
   // Start transaction
   $db->beginTransaction();
 
-  // Stamp validated_at on approve/reject
+  // Stamp validated_at on approve/reject with precise local timezone
+  date_default_timezone_set('Asia/Manila');
   $now = date('Y-m-d H:i:s');
 
   // Get current logged-in admin details from session
