@@ -43,20 +43,28 @@ $initial = 'U';
 $avatar_url = null;
 $user_role = 'Guest';
 
-// Prioritize student data if on a student page (check path or referer)
-$is_student_page = (strpos($current_path, '/users/') !== false || strpos($referer, '/users/') !== false);
+// Determine role based on current path and active session
+$is_admin_path = (strpos($current_path, '/admin/') !== false);
+$is_student_path = (strpos($current_path, '/users/') !== false);
 
-if ($is_student_page && $student_data) {
+if ($is_admin_path && $admin_data) {
+  $full_name = $admin_data['first_name'] . ' ' . $admin_data['last_name'];
+  $initial = strtoupper(substr($admin_data['first_name'], 0, 1));
+  $avatar_url = $admin_data['profile_image'] ?? null;
+  $user_role = 'Super Admin';
+} elseif ($is_student_path && $student_data) {
   $full_name = $student_data['first_name'] . ' ' . $student_data['last_name'];
   $initial = strtoupper(substr($student_data['first_name'], 0, 1));
   $avatar_url = $student_data['profile_image'] ?? null;
   $user_role = 'Student';
 } elseif ($admin_data) {
+  // Fallback to admin if session exists
   $full_name = $admin_data['first_name'] . ' ' . $admin_data['last_name'];
   $initial = strtoupper(substr($admin_data['first_name'], 0, 1));
   $avatar_url = $admin_data['profile_image'] ?? null;
   $user_role = 'Super Admin';
 } elseif ($student_data) {
+  // Fallback to student
   $full_name = $student_data['first_name'] . ' ' . $student_data['last_name'];
   $initial = strtoupper(substr($student_data['first_name'], 0, 1));
   $avatar_url = $student_data['profile_image'] ?? null;
@@ -83,8 +91,7 @@ if ($is_student_page && $student_data) {
     <!-- Search Bar -->
     <div class="topbar-search-wrapper">
       <i class="fas fa-search"></i>
-      <input type="text" id="global-search" placeholder="Search for services (e.g. Reports, Students)..."
-        autocomplete="off">
+      <input type="text" id="global-search" placeholder="Search services..." autocomplete="off">
 
       <!-- Search Results Dropdown -->
       <div id="search-results" class="search-results-dropdown">
@@ -124,16 +131,16 @@ if ($is_student_page && $student_data) {
     if (userRole === 'Super Admin') {
       services = [
         { name: 'Dashboard', url: 'dashboard.php', icon: `<?= get_icon('dashboard.svg') ?>`, desc: 'System overview and statistics' },
-        { name: 'Student Directory', url: 'students.php', icon: `<?= get_icon('students.svg') ?>`, desc: 'Manage students and ID validation' },
-        { name: 'Manage Queue', url: 'manage-queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'View and handle active queue slots' },
-        { name: 'Schedules', url: 'queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Create and manage validation dates' },
-        { name: 'Reports & Analytics', url: 'reports.php', icon: `<?= get_icon('reports.svg') ?>`, desc: 'View validation and queue data' },
-        { name: 'Profile Settings', url: 'profile.php', icon: `<?= get_icon('profile.svg') ?>`, desc: 'Update your account info' },
+        { name: 'Queue', url: 'queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Manage validation dates and queue slots' },
+        { name: 'Students', url: 'students.php', icon: `<?= get_icon('students.svg') ?>`, desc: 'Manage students and ID validation' },
+        { name: 'Reports', url: 'reports.php', icon: `<?= get_icon('reports.svg') ?>`, desc: 'View validation and queue data' },
+        { name: 'Profile', url: 'profile.php', icon: `<?= get_icon('profile.svg') ?>`, desc: 'Update your account info' },
       ];
     } else {
       services = [
         { name: 'Student Dashboard', url: 'student-dashboard.php', icon: `<?= get_icon('dashboard.svg') ?>`, desc: 'View your queue status and validation info' },
-        { name: 'Book Validation', url: 'book-queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Schedule a validation appointment' },
+        { name: 'Book Validation', url: 'book-queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Schedule a validation appointment in the queue' },
+        { name: 'View History', url: 'my-history.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'View your past validation records' },
         { name: 'My Profile', url: 'profile.php', icon: `<?= get_icon('profile.svg') ?>`, desc: 'Update your personal details' },
       ];
     }
