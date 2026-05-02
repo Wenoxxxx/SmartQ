@@ -94,7 +94,7 @@ if ($is_student_page && $student_data) {
 
     <!-- User Profile -->
     <div class="topbar-user-profile" id="user-menu">
-      <div class="topbar-user-link">
+      <a href="profile.php" class="topbar-user-link" title="Go to Profile">
         <div class="topbar-avatar" id="avatar-container" title="Click to upload profile picture">
           <?php if ($avatar_url): ?>
             <img src="<?= htmlspecialchars($avatar_url) ?>" alt="Avatar" class="avatar-img" id="current-avatar">
@@ -110,7 +110,7 @@ if ($is_student_page && $student_data) {
           <span class="topbar-username"><?= htmlspecialchars($full_name) ?></span>
           <span class="topbar-user-role"><?= htmlspecialchars($user_role) ?></span>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -181,7 +181,9 @@ if ($is_student_page && $student_data) {
     });
 
     // Avatar Upload Logic (Use Event Delegation)
-    $(document).on('click', '#avatar-container', function () {
+    $(document).on('click', '#avatar-container', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
       $('#avatar-upload').click();
     });
 

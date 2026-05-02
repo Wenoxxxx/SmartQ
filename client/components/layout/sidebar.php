@@ -73,7 +73,7 @@ function sidebar_icon($filename)
         <li>
           <a href="student-dashboard.php" class="sidebar-link <?= $active === 'dashboard' ? 'active' : '' ?>">
             <?= sidebar_icon('dashboard.svg') ?>
-            <span class="sidebar-label">My Status</span>
+            <span class="sidebar-label">Dashboard</span>
           </a>
         </li>
         <li>
@@ -94,10 +94,27 @@ function sidebar_icon($filename)
 
   <!-- Sidebar footer -->
   <div class="sidebar-footer">
-    <a href="../../../server/api/auth/logout.php?role=<?= $role ?>" class="sidebar-link">
+    <a href="#" class="sidebar-link" id="logout-trigger"
+      onclick="event.preventDefault(); document.getElementById('logout-modal').classList.add('active');">
       <?= sidebar_icon('logout.svg') ?>
       <span class="sidebar-label">Logout</span>
     </a>
   </div>
 
 </aside>
+
+<!-- ── Logout Confirmation Modal ── -->
+<div class="logout-modal-overlay" id="logout-modal">
+  <div class="logout-modal">
+    <div class="logout-modal-icon">
+      <?= sidebar_icon('logout.svg') ?>
+    </div>
+    <h3 class="logout-modal-title">Sign Out</h3>
+    <p class="logout-modal-text">Are you sure you want to log out of your account?</p>
+    <div class="logout-modal-actions">
+      <button class="logout-btn-cancel"
+        onclick="document.getElementById('logout-modal').classList.remove('active');">Cancel</button>
+      <a href="../../../server/api/auth/logout.php?role=<?= $role ?>" class="logout-btn-confirm">Log Out</a>
+    </div>
+  </div>
+</div>
