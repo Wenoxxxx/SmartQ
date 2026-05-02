@@ -21,17 +21,16 @@ $colleges = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Color Map (matches students.php)
 $college_colors = [
-  'COT' => '#ff7d04',
-  'CON' => '#ec57ee',
-  'COB' => '#fac800',
-  'COE' => '#1c5adf',
-  'CPAG' => '#23c7c7',
-  'CAS' => '#10b981',
+    'COT'  => '#ff7d04',
+    'CON'  => '#ec57ee',
+    'COB'  => '#fac800',
+    'COE'  => '#1c5adf',
+    'CPAG' => '#23c7c7',
+    'CAS'  => '#10b981',
 ];
 
 $maxStudents = (count($colleges) > 0) ? max(array_column($colleges, 'students')) : 0;
-if ($maxStudents == 0)
-  $maxStudents = 1;
+if ($maxStudents == 0) $maxStudents = 1;
 ?>
 
 <div class="colleges-card">
@@ -41,10 +40,10 @@ if ($maxStudents == 0)
   </div>
   <ul class="colleges-items" id="colleges-list">
     <?php foreach ($colleges as $college): ?>
-      <?php
-      $abbr = $college['name']; // In this system, name often holds the abbr like 'COT'
-      $color = $college_colors[$abbr] ?? '#3b82f6';
-      $pct = round(($college['students'] / $maxStudents) * 100);
+      <?php 
+        $abbr = $college['name']; // In this system, name often holds the abbr like 'COT'
+        $color = $college_colors[$abbr] ?? '#3b82f6';
+        $pct = round(($college['students'] / $maxStudents) * 100); 
       ?>
       <li class="college-item">
 
