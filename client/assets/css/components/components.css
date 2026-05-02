@@ -1063,8 +1063,8 @@
   position: absolute;
   inset: 0;
   background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .modal-card {
@@ -1117,9 +1117,14 @@
 }
 
 .modal-actions {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  display: flex;
   gap: 12px;
+  justify-content: center;
+}
+
+.modal-actions > * {
+  flex: 1;
+  max-width: 200px;
 }
 
 .modal-btn-cancel, .modal-btn-confirm {
@@ -1177,8 +1182,8 @@
   align-items: center;
   justify-content: center;
   background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.25s ease, visibility 0.25s ease;

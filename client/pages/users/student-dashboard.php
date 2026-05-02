@@ -27,7 +27,7 @@ try {
   $q_booking = "SELECT ql.queue_number, ql.schedule_id, qs.schedule_date, qs.start_time, qs.end_time, qs.current_number 
                 FROM queue_list ql
                 JOIN queue_schedule qs ON ql.schedule_id = qs.schedule_id
-                WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL
+                WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL AND qs.deleted_at IS NULL
                 ORDER BY qs.schedule_date ASC LIMIT 1";
   $stmt_b = $db->prepare($q_booking);
   $stmt_b->bindParam(':sid', $user['student_id']);

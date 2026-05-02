@@ -97,6 +97,12 @@ if (!isset($_SESSION['admin'])) {
             $queueStmt->bindParam(':id', $schedule_id);
             $queueStmt->execute();
             $queuedStudents = $queueStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Fetch colleges for filter
+            $collegesQuery = "SELECT * FROM colleges ORDER BY college_name ASC";
+            $collegesStmt = $db->prepare($collegesQuery);
+            $collegesStmt->execute();
+            $allColleges = $collegesStmt->fetchAll(PDO::FETCH_ASSOC);
             ?>
 
             <header class="manage-header">
@@ -119,8 +125,12 @@ if (!isset($_SESSION['admin'])) {
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </button>
-                <a href="../../../server/api/events/download_report.php?id=<?= $schedule_id ?>"
-                  class="btn-download-list">Download List</a>
+                <button id="btn-open-download" class="btn-download-list">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                  </svg>
+                  Download List
+                </button>
               </div>
 
               <style>
@@ -211,18 +221,73 @@ if (!isset($_SESSION['admin'])) {
                 }
 
                 .btn-download-list {
+                  display: inline-flex;
+                  align-items: center;
                   font-size: 0.8rem;
                   color: #64748b;
                   text-decoration: none;
                   font-weight: 600;
-                  padding: 8px;
+                  padding: 8px 12px;
                   border-radius: 8px;
+                  border: 1px solid #e2e8f0;
+                  background: white;
+                  cursor: pointer;
                   transition: all 0.2s;
                 }
 
                 .btn-download-list:hover {
                   color: #1c5adf;
                   background: #f8fafc;
+                  border-color: #1c5adf30;
+                }
+
+                /* Download Modal Specific */
+                .download-form {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 16px;
+                  text-align: left;
+                  margin-top: 20px;
+                }
+
+                .filter-group {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 6px;
+                }
+
+                .filter-group label {
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  color: #64748b;
+                  text-transform: uppercase;
+                  letter-spacing: 0.02em;
+                }
+
+                .filter-select {
+                  padding: 10px;
+                  border-radius: 8px;
+                  border: 1px solid #e2e8f0;
+                  font-size: 0.9rem;
+                  color: #1e293b;
+                  outline: none;
+                }
+
+                .checkbox-group {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  font-size: 0.85rem;
+                  color: #475569;
+                  font-weight: 600;
+                  cursor: pointer;
+                  margin-top: 4px;
+                }
+
+                .checkbox-group input {
+                  width: 16px;
+                  height: 16px;
+                  cursor: pointer;
                 }
               </style>
             </header>
@@ -314,21 +379,66 @@ if (!isset($_SESSION['admin'])) {
         </div>
       </main>
 
-      <!-- ── Confirmation Modal ── -->
+      <!-- ── Status Confirmation Modal ── -->
       <div id="status-modal" class="modal-overlay">
-        <!-- Backdrop -->
         <div id="modal-backdrop" class="modal-backdrop"></div>
-        <!-- Card -->
         <div class="modal-card">
-          <div id="modal-icon" class="modal-icon">
-            <!-- icon injected by JS -->
-          </div>
+          <div id="modal-icon" class="modal-icon"></div>
           <h3 id="modal-title" class="modal-title"></h3>
           <p id="modal-desc" class="modal-desc"></p>
           <div class="modal-actions">
             <button id="modal-cancel-btn" class="modal-btn-cancel">Cancel</button>
             <button id="modal-confirm-btn" class="modal-btn-confirm">Confirm</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Download Filter Modal ── -->
+      <div id="download-modal" class="modal-overlay">
+        <div class="modal-backdrop download-modal-close"></div>
+        <div class="modal-card" style="max-width: 400px;">
+          <div class="modal-icon" style="background: rgba(28, 90, 223, 0.1);">
+            <svg width="24" height="24" fill="none" stroke="#1c5adf" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+          </div>
+          <h3 class="modal-title">Download Options</h3>
+          <p class="modal-desc">Select filters for the student list export.</p>
+
+          <form id="download-form" class="download-form" action="../../../server/api/events/download_report.php" method="GET">
+            <input type="hidden" name="id" value="<?= $schedule_id ?>">
+            
+            <div class="filter-group">
+              <label>Filter by College</label>
+              <select name="college_id" class="filter-select">
+                <option value="">All Colleges</option>
+                <?php foreach ($allColleges as $college): ?>
+                  <option value="<?= $college['college_id'] ?>"><?= htmlspecialchars($college['college_name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label>Filter by Year Level</label>
+              <select name="yearlvl" class="filter-select">
+                <option value="">All Years</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+              </select>
+            </div>
+
+            <label class="checkbox-group">
+              <input type="checkbox" name="sort_surname" value="1">
+              <span>Sort alphabetically (Surname)</span>
+            </label>
+
+            <div class="modal-actions" style="margin-top: 10px;">
+              <button type="button" class="modal-btn-cancel download-modal-close">Cancel</button>
+              <button type="submit" class="modal-btn-confirm" style="background: #1c5adf;">Download CSV</button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -408,6 +518,7 @@ if (!isset($_SESSION['admin'])) {
       $('#btn-advance-queue').on('click', function () {
         const $btn = $(this);
         const scheduleId = '<?= $schedule_id ?>';
+        const totalBooked = <?= (int)$bookedCount ?>;
 
         $btn.prop('disabled', true).find('span').text('Calling...');
 
@@ -418,12 +529,45 @@ if (!isset($_SESSION['admin'])) {
           dataType: 'json',
           success: function (res) {
             if (res.success) {
-              const padded = String(res.current_number).padStart(3, '0');
+              const currentNum = parseInt(res.current_number);
+              const padded = String(currentNum).padStart(3, '0');
               $('#current-number-display').text('#' + padded);
 
               // Highlight the row in the table if it exists
               $('.students-table tr').css('background', ''); // Reset
               $(`.students-table tr:has(strong:contains("#${padded}"))`).css('background', '#f0f9ff');
+
+              // Notification for last student or end of queue
+              if (res.message === 'Queue already finished' || currentNum > totalBooked) {
+                openModal({
+                  iconBg: 'rgba(148,163,184,0.1)',
+                  iconSvg: '<svg width="24" height="24" fill="none" stroke="#94a3b8" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>',
+                  title: 'Queue Finished',
+                  desc: 'All queued students have been called. There are no more students in the list.',
+                  confirmColor: '#94a3b8'
+                });
+                $('#modal-cancel-btn').hide();
+                $('#modal-confirm-btn').text('Done').off('click').on('click', function() {
+                   closeModal();
+                   $('#modal-cancel-btn').show();
+                   $('#modal-confirm-btn').text('Confirm');
+                });
+              } else if (currentNum === totalBooked) {
+                openModal({
+                  iconBg: 'rgba(255,193,7,0.1)',
+                  iconSvg: '<svg width="24" height="24" fill="none" stroke="#ffc107" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8v4M12 16h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/></svg>',
+                  title: 'Last Student!',
+                  desc: 'You have reached the last student in the queue for this schedule.',
+                  confirmColor: '#ffc107'
+                });
+                // Disable cancel on this specific alert
+                $('#modal-cancel-btn').hide();
+                $('#modal-confirm-btn').text('Got it').off('click').on('click', function() {
+                   closeModal();
+                   $('#modal-cancel-btn').show();
+                   $('#modal-confirm-btn').text('Confirm');
+                });
+              }
             } else {
               alert('Error: ' + res.message);
             }
@@ -474,6 +618,19 @@ if (!isset($_SESSION['admin'])) {
             $confirmBtn.prop('disabled', false).text('Confirm');
           }
         });
+      });
+
+      // Download Modal Toggle
+      $('#btn-open-download').on('click', function() {
+        $('#download-modal').css('display', 'flex');
+      });
+
+      $('.download-modal-close').on('click', function() {
+        $('#download-modal').fadeOut(150);
+      });
+
+      $('#download-form').on('submit', function() {
+        $('#download-modal').fadeOut(150);
       });
     });
   </script>
