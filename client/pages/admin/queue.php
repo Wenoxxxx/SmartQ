@@ -21,6 +21,38 @@ if (!isset($_SESSION['admin'])) {
   <link rel="stylesheet" href="../../assets/css/components/components.css">
   <link rel="stylesheet" href="../../assets/css/admin/queue.css">
 
+  <style>
+    .btn-archive-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-archive-toggle:hover {
+      background: #f1f5f9;
+      color: var(--primary-color);
+      border-color: var(--primary-color)20;
+      transform: translateY(-1px);
+    }
+
+    .btn-archive-toggle svg {
+      transition: transform 0.2s;
+    }
+
+    .btn-archive-toggle:hover svg {
+      transform: translateX(-2px);
+    }
+  </style>
+
   <title>SmartQ | Queue Management</title>
 </head>
 
@@ -41,6 +73,12 @@ if (!isset($_SESSION['admin'])) {
         require_once "../../../server/config/database.php";
         $database = new Database();
         $db = $database->getConnection();
+
+        // Fetch colleges for filter
+        $collegesQuery = "SELECT * FROM colleges ORDER BY college_name ASC";
+        $collegesStmt = $db->prepare($collegesQuery);
+        $collegesStmt->execute();
+        $allColleges = $collegesStmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
         <div class="queue-container">
 
@@ -67,16 +105,29 @@ if (!isset($_SESSION['admin'])) {
             <div class="queue-title">
               <h2><?= $showArchived ? 'Archived Schedules' : 'Active Schedules' ?></h2>
               <p>
-                <?= $showArchived ? 'Viewing historical data.' : 'You have ' . $activeCount . ' active validation schedule' . ($activeCount != 1 ? 's' : '') . ' currently.' ?>
-                <a href="?view=<?= $showArchived ? 'active' : 'archived' ?>"
-                  style="margin-left: 10px; font-size: 0.85rem; color: var(--primary);">
-                  <?= $showArchived ? 'View Active' : 'View Archive' ?>
-                </a>
+                <?= $showArchived ? 'Viewing historical data and past validation events.' : 'You have ' . $activeCount . ' active validation schedule' . ($activeCount != 1 ? 's' : '') . ' currently.' ?>
               </p>
             </div>
-            <button class="btn-add-schedule" id="openModal">
-              <span>+</span> Create Schedule
-            </button>
+            <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
+              <?php if ($showArchived): ?>
+                <a href="?view=active" class="btn-archive-toggle">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Back to Active
+                </a>
+              <?php else: ?>
+                <a href="?view=archived" class="btn-archive-toggle">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  View Archives
+                </a>
+                <button class="btn-add-schedule" id="openModal">
+                  <span>+</span> Create Schedule
+                </button>
+              <?php endif; ?>
+            </div>
           </header>
 
           <div class="queue-stats-grid">
@@ -180,7 +231,7 @@ if (!isset($_SESSION['admin'])) {
                   } elseif ($status === 'cancelled' || $status === 'closed') {
                     echo '<div style="display: flex; flex-direction: column; width: 100%; gap: 10px;">
                                     <div style="display: flex; gap: 10px; width: 100%;">
-                                      <a href="../../../server/api/events/download_report.php?id=' . $row['schedule_id'] . '" class="btn-download" style="background: #dcfce7; color: #16a34a; text-decoration: none; text-align: center; padding: 10px; border-radius: 8px; font-weight: 600; flex: 1;">Report</a>';
+                                      <button class="btn-download btn-open-report-modal" data-id="' . $row['schedule_id'] . '" style="background: #dcfce7; color: #16a34a; border: none; text-align: center; padding: 10px; border-radius: 8px; font-weight: 600; flex: 1; cursor: pointer;">Report</button>';
 
                     if (!$showArchived) {
                       echo '<button class="btn-archive-schedule" data-id="' . $row['schedule_id'] . '" style="background: #f1f5f9; color: #64748b; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">Archive</button>';
@@ -189,7 +240,14 @@ if (!isset($_SESSION['admin'])) {
                     echo '</div>';
 
                     if ($showArchived) {
-                      echo '<button disabled style="width: 100%; background: #f1f5f9; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: 600;">Archived</button>';
+                      echo '<div style="display: flex; gap: 10px; width: 100%;">
+                              <button class="btn-restore-schedule" data-id="' . $row['schedule_id'] . '" style="background: #f0f9ff; color: #1c5adf; border: 1px solid #1c5adf30; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; flex: 2;">Restore</button>
+                              <button class="btn-delete-permanent" data-id="' . $row['schedule_id'] . '" style="background: #fff1f2; color: #e11d48; border: 1px solid #e11d4820; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; flex: 1;" title="Delete Permanently">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: block; margin: 0 auto;">
+                                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                              </button>
+                            </div>';
                     } else {
                       echo '<button disabled style="width: 100%; background: #f1f5f9; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: 600;">Schedule ' . ucfirst($status) . '</button>';
                     }
@@ -210,6 +268,89 @@ if (!isset($_SESSION['admin'])) {
             ?>
           </div>
         </div>
+
+        <!-- ── Download Filter Modal ── -->
+        <div id="download-modal" class="modal-overlay">
+          <div class="modal-backdrop download-modal-close"></div>
+          <div class="modal-card" style="max-width: 400px; text-align: center;">
+            <div class="modal-icon" style="background: rgba(28, 90, 223, 0.1);">
+              <svg width="24" height="24" fill="none" stroke="#1c5adf" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+            </div>
+            <h3 class="modal-title">Download Options</h3>
+            <p class="modal-desc">Select filters for the student list export.</p>
+
+            <form id="download-form" class="download-form" action="../../../server/api/events/download_report.php" method="GET">
+              <input type="hidden" name="id" id="download-schedule-id" value="">
+              
+              <div class="filter-group">
+                <label>Filter by College</label>
+                <select name="college_id" class="filter-select">
+                  <option value="">All Colleges</option>
+                  <?php foreach ($allColleges as $college): ?>
+                    <option value="<?= $college['college_id'] ?>"><?= htmlspecialchars($college['college_name']) ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Filter by Year Level</label>
+                <select name="yearlvl" class="filter-select">
+                  <option value="">All Years</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+
+              <label class="checkbox-group" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #475569; font-weight: 600; cursor: pointer; margin-top: 4px; text-align: left;">
+                <input type="checkbox" name="sort_surname" value="1" style="width: 16px; height: 16px;">
+                <span>Sort alphabetically (Surname)</span>
+              </label>
+
+              <div class="modal-actions" style="margin-top: 20px;">
+                <button type="button" class="modal-btn-cancel download-modal-close">Cancel</button>
+                <button type="submit" class="modal-btn-confirm" style="background: #1c5adf;">Download CSV</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <style>
+          /* Download Modal Specific */
+          .download-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+            margin-top: 20px;
+          }
+
+          .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+          }
+
+          .filter-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+          }
+
+          .filter-select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #1e293b;
+            outline: none;
+          }
+        </style>
       </main>
 
       <div data-component="footer"></div>
@@ -345,6 +486,73 @@ if (!isset($_SESSION['admin'])) {
             error: function () {
               alert('Failed to connect to the server.');
               $btn.prop('disabled', false).text('Archive');
+            }
+          });
+        }
+      });
+
+      // Download Modal Logic
+      $(document).on('click', '.btn-open-report-modal', function() {
+        const id = $(this).data('id');
+        $('#download-schedule-id').val(id);
+        $('#download-modal').css('display', 'flex');
+      });
+
+      $('.download-modal-close').on('click', function() {
+        $('#download-modal').fadeOut(150);
+      });
+
+      $('#download-form').on('submit', function() {
+        $('#download-modal').fadeOut(150);
+      });
+
+      // Handle Restore Schedule
+      $(document).on('click', '.btn-restore-schedule', function () {
+        const id = $(this).data('id');
+        const $btn = $(this);
+        $btn.prop('disabled', true).text('Restoring...');
+
+        $.ajax({
+          url: '../../../server/api/events/restore_schedule.php',
+          method: 'POST',
+          data: { schedule_id: id },
+          dataType: 'json',
+          success: function (response) {
+            if (response.success) {
+              location.reload();
+            } else {
+              alert('Error: ' + response.message);
+              $btn.prop('disabled', false).text('Restore Schedule');
+            }
+          },
+          error: function () {
+            alert('Failed to connect to the server.');
+            $btn.prop('disabled', false).text('Restore Schedule');
+          }
+        });
+      // Handle Permanent Delete Schedule
+      $(document).on('click', '.btn-delete-permanent', function () {
+        const id = $(this).data('id');
+        if (confirm('WARNING: Are you sure you want to PERMANENTLY delete this schedule and all its student list? This action cannot be undone and will be removed from the database.')) {
+          const $btn = $(this);
+          $btn.prop('disabled', true).html('...');
+
+          $.ajax({
+            url: '../../../server/api/events/permanent_delete_schedule.php',
+            method: 'POST',
+            data: { schedule_id: id },
+            dataType: 'json',
+            success: function (response) {
+              if (response.success) {
+                location.reload();
+              } else {
+                alert('Error: ' + response.message);
+                $btn.prop('disabled', false).html('<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: block; margin: 0 auto;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>');
+              }
+            },
+            error: function () {
+              alert('Failed to connect to the server.');
+              $btn.prop('disabled', false).html('<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: block; margin: 0 auto;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>');
             }
           });
         }

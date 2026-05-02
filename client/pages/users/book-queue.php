@@ -105,9 +105,9 @@ $user = $_SESSION['student'];
               <?php
               // Fetch only active schedules
               $query = "SELECT qs.*, 
-                          (SELECT COUNT(*) FROM queue_list ql WHERE ql.schedule_id = qs.schedule_id) as booked_count
+                          (SELECT COUNT(*) FROM queue_list ql WHERE ql.schedule_id = qs.schedule_id AND ql.deleted_at IS NULL) as booked_count
                           FROM queue_schedule qs 
-                          WHERE qs.status = 'active' AND qs.schedule_date >= CURDATE()
+                          WHERE qs.status = 'active' AND qs.schedule_date >= CURDATE() AND qs.deleted_at IS NULL
                           ORDER BY qs.schedule_date ASC, qs.start_time ASC";
               $stmt = $db->prepare($query);
               $stmt->execute();

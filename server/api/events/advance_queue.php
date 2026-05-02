@@ -20,24 +20,41 @@ try {
     $database = new Database();
     $db = $database->getConnection();
 
-    // Find the next queue number that exists in the list for this schedule
-    // We don't just increment by 1 because there might be gaps (though unlikely)
-    // Actually, simple increment is fine as the student view handles "Current serving: No. X"
-    
+    // 1. Get current status and total booked students
+    $statusQuery = "SELECT qs.current_number, (SELECT COUNT(*) FROM queue_list ql WHERE ql.schedule_id = qs.schedule_id) as total_booked 
+                    FROM queue_schedule qs WHERE qs.schedule_id = :id";
+    $statusStmt = $db->prepare($statusQuery);
+    $statusStmt->execute(['id' => $schedule_id]);
+    $status = $statusStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$status) {
+        echo json_encode(['success' => false, 'message' => 'Schedule not found']);
+        exit;
+    }
+
+    if ($status['current_number'] >= $status['total_booked']) {
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Queue already finished', 
+            'current_number' => $status['current_number'],
+            'is_end' => true
+        ]);
+        exit;
+    }
+
+    // 2. Increment current_number
     $query = "UPDATE queue_schedule SET current_number = current_number + 1 WHERE schedule_id = :id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':id', $schedule_id);
 
     if ($stmt->execute()) {
-        // Fetch the new current number to return it
-        $stmt = $db->prepare("SELECT current_number FROM queue_schedule WHERE schedule_id = :id");
-        $stmt->execute(['id' => $schedule_id]);
-        $newNumber = $stmt->fetchColumn();
+        $newNumber = $status['current_number'] + 1;
 
         echo json_encode([
             'success' => true,
             'message' => 'Queue advanced',
-            'current_number' => $newNumber
+            'current_number' => $newNumber,
+            'is_end' => ($newNumber >= $status['total_booked'])
         ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Failed to advance queue']);

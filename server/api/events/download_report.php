@@ -22,18 +22,45 @@ try {
         die("Schedule not found");
     }
 
-    // Fetch booked students
-    $query = "SELECT ql.queue_number, s.student_id, s.first_name, s.last_name, s.email, s.college_id 
+    // Filters
+    $college_id = $_GET['college_id'] ?? '';
+    $yearlvl = $_GET['yearlvl'] ?? '';
+    $sort_surname = $_GET['sort_surname'] ?? '0';
+
+    // Fetch booked students with filters
+    $sql = "SELECT ql.queue_number, s.student_id, s.first_name, s.last_name, s.email, c.college_name, s.yearlvl 
               FROM queue_list ql
               JOIN students s ON ql.student_id = s.student_id
               LEFT JOIN colleges c ON s.college_id = c.college_id
-              WHERE ql.schedule_id = :id
-              ORDER BY ql.queue_number ASC";
+              WHERE ql.schedule_id = :id";
+    
+    $params = [':id' => $schedule_id];
 
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $schedule_id);
+    if (!empty($college_id)) {
+        $sql .= " AND s.college_id = :college_id";
+        $params[':college_id'] = $college_id;
+    }
+
+    if (!empty($yearlvl)) {
+        $sql .= " AND s.yearlvl = :yearlvl";
+        $params[':yearlvl'] = $yearlvl;
+    }
+
+    if ($sort_surname == '1') {
+        $sql .= " ORDER BY s.last_name ASC, s.first_name ASC";
+    } else {
+        $sql .= " ORDER BY ql.queue_number ASC";
+    }
+
+    $stmt = $db->prepare($sql);
+    foreach ($params as $key => $val) {
+        $stmt->bindValue($key, $val);
+    }
     $stmt->execute();
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Update Header labels for CSV
+    $csvHeader = ['Queue No', 'Student ID', 'First Name', 'Last Name', 'Email', 'College', 'Year Level'];
 
     // Generate CSV
     $filename = "SmartQ_Report_" . $schedule_id . "_" . date('Y-m-d') . ".csv";
@@ -51,7 +78,7 @@ try {
     fputcsv($output, ['Status', $schedule['status']]);
     fputcsv($output, []); // Blank line
 
-    fputcsv($output, ['Queue No', 'Student ID', 'First Name', 'Last Name', 'Email', 'College ID']);
+    fputcsv($output, $csvHeader);
 
     foreach ($students as $row) {
         fputcsv($output, $row);

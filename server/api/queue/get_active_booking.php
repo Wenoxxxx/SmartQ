@@ -22,6 +22,7 @@ try {
               AND qs.status = 'active' 
               AND qs.schedule_date >= CURDATE()
               AND ql.deleted_at IS NULL
+              AND qs.deleted_at IS NULL
               ORDER BY qs.schedule_date ASC LIMIT 1";
               
     $stmt = $db->prepare($query);
