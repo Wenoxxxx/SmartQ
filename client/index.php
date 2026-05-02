@@ -60,6 +60,9 @@
             Start Your Journey <i class="fas fa-arrow-right"></i>
           </a>
           <a href="#about" class="btn-main btn-secondary">Explore Features</a>
+          <a href="pages/login.php" class="btn-main btn-login-hero">
+            <i class="fas fa-user-circle"></i> Login to Account
+          </a>
         </div>
       </div>
     </div>

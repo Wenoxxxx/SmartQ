@@ -102,7 +102,7 @@ button {
 /* ── Auth Card ── */
 .auth-card {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
     background: var(--card-bg);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
@@ -425,3 +425,53 @@ input[type=number] {
     color: #b91c1c;
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 480px) {
+    .auth-body {
+        padding: 15px;
+        align-items: flex-start;
+        padding-top: 80px;
+    }
+
+    .auth-card {
+        border-radius: 20px;
+    }
+
+    .auth-card-header {
+        padding: 24px 20px;
+    }
+
+    .auth-card-body {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-control {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .auth-input-group .form-control {
+        padding-left: 42px;
+    }
+
+    .auth-btn {
+        padding: 14px;
+        font-size: 15px;
+        margin-top: 10px;
+    }
+
+    .back-btn {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+}

@@ -495,7 +495,6 @@
   .student-card {
     padding: 20px !important;
   }
-}
 
   /* Bottom Nav for Mobile */
   .mobile-nav {
@@ -534,6 +533,10 @@
 
   .mobile-nav-item.active {
     color: var(--student-primary);
+  }
+
+  .logout-nav-item:hover, .logout-nav-item:active {
+    color: #ef4444 !important;
   }
 }
 

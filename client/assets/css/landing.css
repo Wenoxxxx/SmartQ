@@ -69,33 +69,32 @@ body.no-scroll {
 /* --- TOP BAR --- */
 .top-bar {
   position: fixed;
-  top: 20px;
+  top: 15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 95%;
   max-width: 1200px;
-  height: var(--nav-height);
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0 40px;
-  border-radius: 20px;
-  background: var(--glass-bg);
+  padding: 0 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
 
 .top-bar.scrolled {
-  height: 70px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  top: 0;
+  width: 100%;
+  border-radius: 0;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .top-bar .container {
@@ -166,6 +165,10 @@ body.no-scroll {
   display: flex;
   gap: 16px;
   align-items: center;
+}
+
+.mobile-only-actions {
+  display: none;
 }
 
 .btn-login {
@@ -267,10 +270,11 @@ body.no-scroll {
 .hero-content h1 {
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  line-height: 1.1;
+  font-size: clamp(2.2rem, 8vw, 4.2rem);
+  letter-spacing: -1.5px;
+  line-height: 1.05;
   margin-bottom: 24px;
-  background: linear-gradient(to bottom, var(--text-main), #475569);
+  background: linear-gradient(135deg, var(--text-main) 0%, #475569 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -320,6 +324,32 @@ body.no-scroll {
 .btn-secondary:hover {
   background: #f8fafc;
   transform: translateY(-3px);
+}
+
+.btn-login-hero {
+  display: none;
+  background: var(--primary-color);
+  color: white !important;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 20px rgba(28, 90, 223, 0.15);
+  border: none;
+}
+
+.btn-login-hero:hover {
+  background: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(28, 90, 223, 0.25);
+}
+
+.btn-login-hero i {
+  font-size: 1.2rem;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.btn-login-hero:hover i {
+  transform: rotate(15deg) scale(1.1);
 }
 
 /* --- COMMON SECTION STYLES --- */
@@ -747,23 +777,30 @@ footer p {
 }
 
 @media (max-width: 992px) {
-  .top-bar .container {
-    padding: 0 20px;
+  .top-bar {
+    padding: 0 15px;
+    height: 60px;
+    width: 96%;
   }
 
   .nav-links {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 100%;
+    width: 85%;
+    max-width: 300px;
     height: 100vh;
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: 0.4s ease;
+    justify-content: flex-start;
+    padding: 100px 30px;
+    align-items: flex-start;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1050;
-    gap: 40px;
+    gap: 25px;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
   }
 
   .nav-links.active {
@@ -771,20 +808,24 @@ footer p {
   }
 
   .nav-links a {
-    font-size: 1.5rem;
-    color: var(--text-main);
-  }
-
-  .mobile-toggle {
-    display: flex;
-    order: 3;
+    font-size: 1.25rem;
+    font-weight: 700;
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   .nav-actions {
     display: none;
   }
 
+  .mobile-toggle {
+    display: flex;
+    margin-left: auto;
+  }
+
   .hero-section {
+    padding-top: 140px;
     text-align: center;
   }
 
@@ -794,16 +835,25 @@ footer p {
 
   .hero-btns {
     justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    gap: 12px;
+  }
+
+  .btn-login-hero {
+    display: flex;
   }
 
   .about-grid {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 50px;
   }
 
   .contact-container {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 40px;
   }
 }
 

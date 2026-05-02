@@ -227,6 +227,12 @@ $user = $_SESSION['student'];
       </svg>
       <span>Profile</span>
     </a>
+    <a href="../../../server/api/auth/logout.php" class="mobile-nav-item logout-nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+      </svg>
+      <span>Logout</span>
+    </a>
   </nav>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
