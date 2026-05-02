@@ -148,7 +148,6 @@
 
 .sidebar-footer {
   padding: 24px 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -555,14 +554,17 @@
     padding: 12px;
     gap: 10px;
   }
+
   .stat-card-icon {
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
   }
+
   .stat-card-value {
     font-size: 1.2rem !important;
   }
+
   .stat-card-label {
     font-size: 0.75rem !important;
   }
@@ -1095,8 +1097,15 @@
 }
 
 @keyframes modalBounceIn {
-  from { opacity: 0; transform: scale(0.8) translateY(30px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modal-icon {
@@ -1136,12 +1145,13 @@
   justify-content: center;
 }
 
-.modal-actions > * {
+.modal-actions>* {
   flex: 1;
   max-width: 200px;
 }
 
-.modal-btn-cancel, .modal-btn-confirm {
+.modal-btn-cancel,
+.modal-btn-confirm {
   padding: 14px;
   border-radius: 16px;
   font-size: 1rem;
@@ -1293,4 +1303,3 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
-
