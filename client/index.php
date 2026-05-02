@@ -166,7 +166,7 @@
             <div class="step-number">2</div>
             <div class="step-icon"><i class="fas fa-eye"></i></div>
             <h4>Live Tracking</h4>
-            <p>Monitor your real-time position and estimated wait from your dashboard.</p>
+            <p>Monitor your real-time position from your dashboard.</p>
           </div>
 
           <!-- Step 3 -->
@@ -207,11 +207,13 @@
             <div class="team-info">
               <h4>Althea Hassel Daing</h4>
               <span class="role">UI/UX Designer</span>
-              <p class="description">Designs clean, user‑friendly interfaces with a focus on detail.</p>
+              <p class="description">Designs clean, user-friendly interfaces with a focus on detail and intuitive
+                design.</p>
               <div class="team-socials">
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401102451@student.buksu.edu.ph" title="Copy Email">
+                  <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.facebook.com/althiyahasil" target="_blank" class="social-dot"><i class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>
@@ -224,11 +226,13 @@
             <div class="team-info">
               <h4>Alejandra Bernasol</h4>
               <span class="role">System Analyst</span>
-              <p class="description">Analyzes systems and ensures efficient workflow design. </p>
+              <p class="description">Analyzes systems and ensures efficient workflow throughout the system design. </p>
               <div class="team-socials">
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401107938@student.buksu.edu.ph" title="Copy Email">
+                  <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.facebook.com/alejandra.barcelona26" target="_blank" class="social-dot"><i
+                    class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>
@@ -243,9 +247,11 @@
               <span class="role">Hustler</span>
               <p class="description">Drives project success through strong teamwork and effective coordination.</p>
               <div class="team-socials">
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401110883@student.buksu.edu.ph" title="Copy Email">
+                  <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.facebook.com/yohgie.diayon" target="_blank" class="social-dot"><i
+                    class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>
@@ -260,9 +266,10 @@
               <span class="role">Project Lead / Developer</span>
               <p class="description">Leads development with clean, efficient code and ensures system reliability.</p>
               <div class="team-socials">
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
-                <div class="social-dot"></div>
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401111022@student.buksu.edu.ph" title="Copy Email">
+                  <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.facebook.com/wenoxj" target="_blank" class="social-dot"><i class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>
@@ -419,6 +426,16 @@
             showToast('Connection Error', 'An error occurred. Please try again.', 'error');
             $btn.prop('disabled', false).text('Send Message');
           }
+        });
+      });
+
+      // Copy Email Functionality
+      $('.copy-email').on('click', function () {
+        const email = $(this).data('email');
+        navigator.clipboard.writeText(email).then(() => {
+          showToast('Copied!', 'Email address copied to clipboard.', 'success');
+        }).catch(err => {
+          showToast('Error', 'Failed to copy email.', 'error');
         });
       });
     });
