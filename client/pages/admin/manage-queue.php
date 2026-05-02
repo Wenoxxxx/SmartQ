@@ -110,15 +110,121 @@ if (!isset($_SESSION['admin'])) {
               <div class="queue-actions">
                 <div class="now-serving-box">
                   <span class="now-serving-label">Now Serving</span>
-                  <strong
-                    id="current-number-display">#<?= str_pad($schedule['current_number'], 3, '0', STR_PAD_LEFT) ?></strong>
+                  <strong id="current-number-display">#<?= str_pad($schedule['current_number'], 3, '0', STR_PAD_LEFT) ?></strong>
                 </div>
-                <button id="btn-advance-queue" class="btn-primary-small">
-                  Call Next Student
+                <button id="btn-advance-queue" class="btn-call-next">
+                  <span>Call Next Student</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
                 </button>
                 <a href="../../../server/api/events/download_report.php?id=<?= $schedule_id ?>"
                   class="btn-download-list">Download List</a>
               </div>
+
+              <style>
+                .manage-header {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  background: white;
+                  padding: 16px 24px;
+                  border-radius: 14px;
+                  border: 1px solid rgba(0, 0, 0, 0.05);
+                  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+                  margin-bottom: 24px;
+                }
+
+                .manage-header h2 {
+                  font-size: 1.15rem;
+                  font-weight: 800;
+                  color: #1e293b;
+                  margin-bottom: 2px;
+                }
+
+                .queue-meta {
+                  display: flex;
+                  gap: 12px;
+                  font-size: 0.8rem;
+                  color: #64748b;
+                  font-weight: 500;
+                }
+
+                .queue-actions {
+                  display: flex;
+                  align-items: center;
+                  gap: 16px;
+                }
+
+                .now-serving-box {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-end;
+                  padding-right: 16px;
+                  border-right: 1px solid #f1f5f9;
+                }
+
+                .now-serving-label {
+                  font-size: 0.65rem;
+                  text-transform: uppercase;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  letter-spacing: 0.05em;
+                }
+
+                #current-number-display {
+                  font-size: 1.3rem;
+                  font-weight: 800;
+                  color: #1c5adf;
+                  line-height: 1;
+                  margin-top: 2px;
+                }
+
+                .btn-call-next {
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                  background: #1c5adf;
+                  color: white !important;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 10px;
+                  font-weight: 700;
+                  font-size: 0.85rem;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                }
+
+                .btn-call-next:hover {
+                  background: #1549b6;
+                  transform: translateY(-1px);
+                  box-shadow: 0 4px 12px rgba(28, 90, 223, 0.2);
+                }
+
+                .btn-call-next svg {
+                  transition: transform 0.2s;
+                }
+
+                .btn-call-next:hover svg {
+                  transform: translateX(2px);
+                }
+
+                .btn-download-list {
+                  font-size: 0.8rem;
+                  color: #64748b;
+                  text-decoration: none;
+                  font-weight: 600;
+                  padding: 8px;
+                  border-radius: 8px;
+                  transition: all 0.2s;
+                }
+
+                .btn-download-list:hover {
+                  color: #1c5adf;
+                  background: #f8fafc;
+                }
+              </style>
             </header>
 
             <!-- ── Pending Validation Table ── -->
@@ -303,7 +409,7 @@ if (!isset($_SESSION['admin'])) {
         const $btn = $(this);
         const scheduleId = '<?= $schedule_id ?>';
 
-        $btn.prop('disabled', true).text('Calling...');
+        $btn.prop('disabled', true).find('span').text('Calling...');
 
         $.ajax({
           url: '../../../server/api/events/advance_queue.php',
@@ -326,7 +432,7 @@ if (!isset($_SESSION['admin'])) {
             alert('Failed to connect to the server.');
           },
           complete: function () {
-            $btn.prop('disabled', false).text('Call Next Student');
+            $btn.prop('disabled', false).find('span').text('Call Next Student');
           }
         });
       });

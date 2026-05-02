@@ -32,13 +32,13 @@ try {
             s.validated_by_id,
             c.college_name,
             vs.status_name,
-            a.amdin_id        AS admin_id,
+            a.admin_id        AS admin_id,
             a.first_name      AS admin_first_name,
             a.last_name       AS admin_last_name
         FROM students s
         LEFT JOIN colleges c ON s.college_id = c.college_id
         LEFT JOIN validation_status vs ON s.status_id = vs.status_id
-        LEFT JOIN admin a ON s.validated_by_id = a.amdin_id
+        LEFT JOIN admin a ON s.validated_by_id = a.admin_id
         WHERE s.student_id = :id
         LIMIT 1
     ";

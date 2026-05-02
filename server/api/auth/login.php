@@ -9,7 +9,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 if(!empty($data->email) && !empty($data->password)) {
     // Check if the user is an admin
-    $query = "SELECT amdin_id as id, first_name, last_name, email, admin_pass as password FROM admin WHERE email = :email LIMIT 0,1";
+    $query = "SELECT admin_id as id, first_name, last_name, email, admin_pass as password FROM admin WHERE email = :email LIMIT 0,1";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':email', $data->email);
     $stmt->execute();

@@ -196,12 +196,12 @@ if (!isset($_SESSION['admin'])) {
 	<div id="action-modal" class="modal-overlay">
 		<div id="modal-backdrop" class="modal-backdrop"></div>
 		<div class="modal-card">
-			<div id="modal-icon" class="modal-icon-wrapper"></div>
-			<h3 id="modal-title" class="modal-title-text"></h3>
-			<p id="modal-desc" class="modal-desc-text"></p>
-			<div class="modal-action-row">
-				<button id="modal-cancel-btn" class="btn-modal-cancel">Cancel</button>
-				<button id="modal-confirm-btn" class="btn-modal-confirm">Confirm</button>
+			<div id="modal-icon" class="modal-icon"></div>
+			<h3 id="modal-title" class="modal-title"></h3>
+			<p id="modal-desc" class="modal-desc"></p>
+			<div class="modal-actions">
+				<button id="modal-cancel-btn" class="modal-btn-cancel">Cancel</button>
+				<button id="modal-confirm-btn" class="modal-btn-confirm">Confirm</button>
 			</div>
 		</div>
 	</div>
@@ -310,7 +310,7 @@ if (!isset($_SESSION['admin'])) {
 				$modalTitle.text(config.title);
 				$modalDesc.text(config.desc);
 				$confirmBtn.css('background', config.confirmColor);
-				$modal.css('display', 'flex');
+				$modal.css('display', 'flex').hide().fadeIn(200);
 			}
 
 			function closeModal() {

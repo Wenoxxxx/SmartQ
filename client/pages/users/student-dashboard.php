@@ -21,6 +21,22 @@ $db_status = $stmt->fetch(PDO::FETCH_ASSOC);
 $status_id = $db_status['status_id'] ?? 2; // Default to Not Validated
 $name = $user['first_name'] . ' ' . $user['last_name'];
 
+// ── Fetch Active Booking Data ──
+$booking = null;
+try {
+  $q_booking = "SELECT ql.queue_number, ql.schedule_id, qs.schedule_date, qs.start_time, qs.end_time, qs.current_number 
+                FROM queue_list ql
+                JOIN queue_schedule qs ON ql.schedule_id = qs.schedule_id
+                WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL
+                ORDER BY qs.schedule_date ASC LIMIT 1";
+  $stmt_b = $db->prepare($q_booking);
+  $stmt_b->bindParam(':sid', $user['student_id']);
+  $stmt_b->execute();
+  $booking = $stmt_b->fetch(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+  // Silent fail
+}
+
 // Map status to labels and classes
 $status_map = [
   1 => ['label' => 'Validated', 'class' => 'validated'],
@@ -64,28 +80,21 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
         <div class="student-container">
 
           <!-- ── Hero / Status ── -->
-          <div class="student-hero"
-            style="background: linear-gradient(135deg, var(--student-primary) 0%, #1d4ed8 100%); position: relative; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.3); overflow: hidden; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 30px;">
+          <div class="student-hero">
             <!-- Decorative Background Element -->
-            <div
-              style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; blur: 80px; pointer-events: none;">
-            </div>
+            <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; filter: blur(60px); pointer-events: none;"></div>
 
-            <div class="hero-welcome" style="position: relative; z-index: 2;">
-              <h1 style="font-weight: 800; letter-spacing: -1px; font-size: 2.2rem; margin-bottom: 12px; color: #fff;">
+            <div class="hero-welcome">
+              <h1>
                 Welcome back,
-                <span
-                  style="background: #1e40af; padding: 4px 16px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); display: inline-block; transform: rotate(-1deg);"><?php echo htmlspecialchars($user['first_name']); ?></span>!
+                <span><?php echo htmlspecialchars($user['first_name']); ?></span>!
               </h1>
-              <p style="color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; max-width: 400px; line-height: 1.6;">Your
-                digital gateway to campus services. Keep your ID validated for full access.</p>
+              <p>Your digital gateway to campus services. Keep your ID validated for full access.</p>
             </div>
 
-            <div class="hero-status-card"
-              style="position: relative; z-index: 2; background: rgba(255, 255, 255, 1); padding: 20px; border-radius: 20px;">
+            <div class="hero-status-card">
               <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div
-                  style="width: 48px; height: 48px; border-radius: 12px; background: <?php echo $status_id == 1 ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)'; ?>; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: <?php echo $status_id == 1 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)'; ?>; display: flex; align-items: center; justify-content: center;">
                   <?php if ($status_id == 1): ?>
                     <svg width="24" height="24" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24">
                       <polyline points="20 6 9 17 4 12"></polyline>
@@ -103,56 +112,38 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
                   <?php endif; ?>
                 </div>
                 <div>
-                  <span
-                    style="display: block; font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Student
-                    Status</span>
-                  <h3 style="margin: 0; color: var(--text-main); font-size: 1.2rem; font-weight: 700;">
+                  <span style="display: block; font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Student Status</span>
+                  <h3 style="margin: 0; color: #1e293b; font-size: 1.1rem; font-weight: 700;">
                     <?php echo $current_status['label']; ?>
                   </h3>
                 </div>
               </div>
-              <div
-                style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 12px; overflow: hidden;">
-                <div
-                  style="width: <?php echo $status_id == 1 ? '100%' : ($status_id == 3 ? '50%' : '10%'); ?>; height: 100%; background: <?php echo $status_id == 1 ? '#22c55e' : ($status_id == 3 ? '#f59e0b' : '#ef4444'); ?>; transition: width 1s ease;">
-                </div>
+              <div style="height: 6px; background: #f1f5f9; border-radius: 3px; margin-bottom: 10px; overflow: hidden;">
+                <div style="width: <?php echo $status_id == 1 ? '100%' : ($status_id == 3 ? '50%' : '15%'); ?>; height: 100%; background: <?php echo $status_id == 1 ? '#22c55e' : ($status_id == 3 ? '#f59e0b' : '#ef4444'); ?>; transition: width 1s ease;"></div>
               </div>
-              <p style="margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 500;">
+              <p style="margin: 0; font-size: 0.75rem; color: #64748b; font-weight: 500;">
                 <?php echo $status_id == 1 ? 'Validated & Ready' : ($status_id == 3 ? 'Verification in progress' : 'Validation required'); ?>
               </p>
             </div>
           </div>
 
           <!-- ── Quick Stats ── -->
-          <div class="student-stats-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+          <div class="student-stats-grid">
             <?php if (isset($booking['queue_number'])): ?>
               <div data-component="stat-card"
-                data-props='{"label":"Queue Number", "value":"#<?php echo str_pad($booking['queue_number'], 3, '0', STR_PAD_LEFT); ?>", "trend": "flat"}'>
+                data-props='{"label":"Queue Number", "value":"#<?php echo str_pad($booking['queue_number'], 3, '0', STR_PAD_LEFT); ?>"}'>
               </div>
               <div data-component="stat-card"
-                data-props='{"label":"Appointment", "value":"<?php echo date('h:i A', strtotime($booking['start_time'])); ?>", "trend": "flat"}'>
+                data-props='{"label":"Appointment", "value":"<?php echo date('h:i A', strtotime($booking['start_time'])); ?>"}'>
               </div>
             <?php else: ?>
-              <div data-component="stat-card" data-props='{"label":"Active Booking", "value":"None", "trend": "flat"}'>
+              <div data-component="stat-card" data-props='{"label":"Active Booking", "value":"None"}'>
               </div>
             <?php endif; ?>
           </div>
 
           <!-- ── Active Queue (If booked) ── -->
           <?php
-          try {
-            // Fetch the latest booking for the student that is in an active schedule
-            $query = "SELECT ql.queue_number, ql.schedule_id, qs.schedule_date, qs.start_time, qs.end_time, qs.current_number 
-                        FROM queue_list ql
-                        JOIN queue_schedule qs ON ql.schedule_id = qs.schedule_id
-                        WHERE ql.student_id = :sid AND qs.status = 'active' AND qs.schedule_date >= CURDATE() AND ql.deleted_at IS NULL
-                        ORDER BY qs.schedule_date ASC LIMIT 1";
-            $stmt = $db->prepare($query);
-            $stmt->bindParam(':sid', $user['student_id']);
-            $stmt->execute();
-            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
-
             if ($booking):
               $bDate = new DateTime($booking['schedule_date']);
               $bStart = new DateTime($booking['start_time']);
@@ -176,24 +167,23 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
                 $notifMsg = "You are next! Please prepare your documents.";
                 $notifClass = "notif-next";
               } else if ($myNum > $servingNum) {
-                $notifMsg = "Currently serving: No. " . $servingNum;
+                $ahead = $myNum - $servingNum;
+                $notifMsg = "Currently serving: No. " . $servingNum . " (" . $ahead . " " . ($ahead == 1 ? 'person' : 'people') . " ahead)";
               } else {
                 $notifMsg = "Your number has passed.";
               }
               ?>
-              <div class="queue-highlight" style="display: flex; flex-direction: column; gap: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                  <div style="display: flex; align-items: center; gap: 20px;">
-                    <div class="queue-num-box"
-                      style="background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
-                      <span style="color: #94a3b8;">No.</span>
-                      <span style="color: var(--student-primary);"><?php echo $myNum; ?></span>
+              <div class="queue-highlight">
+                <div class="queue-content">
+                  <div class="queue-main">
+                    <div class="queue-num-box">
+                      <span>No.</span>
+                      <span><?php echo $myNum; ?></span>
                     </div>
                     <div class="queue-details">
-                      <h4 style="margin: 0; color: #1e293b; font-weight: 700;">Active Queue Booking</h4>
-                      <p style="margin: 5px 0 0; color: #64748b; font-weight: 500;">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                          style="vertical-align: middle; margin-right: 4px;">
+                      <h4>Active Queue Booking</h4>
+                      <p>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 4px;">
                           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                           <line x1="16" y1="2" x2="16" y2="6"></line>
                           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -201,9 +191,8 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
                         </svg>
                         <?php echo $bDate->format('F d, Y'); ?>
                       </p>
-                      <p style="margin: 3px 0 0; color: #94a3b8; font-size: 0.8rem;">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                          style="vertical-align: middle; margin-right: 4px;">
+                      <p style="color: #94a3b8; font-size: 0.8rem; margin-top: 4px;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 4px;">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
@@ -212,25 +201,20 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
                     </div>
                   </div>
                   <?php if ($status_id != 1): ?>
-                    <button class="btn-cancel-booking" data-id="<?php echo $booking['schedule_id']; ?>"
-                      style="background: #fee2e2; color: #dc2626; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;">
-                      Cancel
+                    <button class="btn-cancel-booking" data-id="<?php echo $booking['schedule_id']; ?>">
+                      Cancel Booking
                     </button>
                   <?php endif; ?>
                 </div>
 
                 <!-- Queue Status Notification -->
-                <div class="queue-notif <?php echo $notifClass; ?>"
-                  style="background: #f8fafc; border-left: 4px solid #cbd5e1; padding: 12px 15px; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: 10px;">
+                <div class="queue-notif <?php echo $notifClass; ?>">
                   <div class="notif-dot"></div>
-                  <span style="font-weight: 500; color: #334155;"><?php echo $notifMsg; ?></span>
+                  <span><?php echo $notifMsg; ?></span>
                 </div>
               </div>
               <?php
             endif;
-          } catch (Exception $e) {
-            // Silent fail for dashboard highlight
-          }
           ?>
 
           <!-- ── Action Grid ── -->
@@ -314,6 +298,50 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
   <script src="../../scripts/component-loader.js"></script>
   <script>
     $(document).ready(function () {
+      // ── Live Queue Polling ──
+      function updateQueueStatus() {
+        $.ajax({
+          url: '../../../server/api/queue/get_active_booking.php',
+          method: 'GET',
+          dataType: 'json',
+          success: function (response) {
+            if (response.success && response.data) {
+              const data = response.data;
+              const myNum = parseInt(data.queue_number);
+              const servingNum = parseInt(data.current_number);
+              const $notif = $('.queue-notif');
+              const $notifText = $notif.find('span');
+              
+              let msg = "";
+              let statusClass = "";
+
+              if (servingNum === 0) {
+                msg = "Waiting for validation to start.";
+              } else if (myNum === servingNum) {
+                msg = "It's your turn! Please proceed to the counter.";
+                statusClass = "notif-now";
+              } else if (myNum === servingNum + 1) {
+                msg = "You are next! Please prepare your documents.";
+                statusClass = "notif-next";
+              } else if (myNum > servingNum) {
+                const ahead = myNum - servingNum;
+                msg = "Currently serving: No. " + servingNum + " (" + ahead + " " + (ahead === 1 ? 'person' : 'people') + " ahead)";
+              } else {
+                msg = "Your number has passed.";
+              }
+
+              $notifText.text(msg);
+              $notif.removeClass('notif-now notif-next').addClass(statusClass);
+            }
+          }
+        });
+      }
+
+      // Poll every 10 seconds
+      if ($('.queue-highlight').length > 0) {
+        setInterval(updateQueueStatus, 10000);
+      }
+
       $('.btn-cancel-booking').click(function () {
         const scheduleId = $(this).data('id');
         const $btn = $(this);

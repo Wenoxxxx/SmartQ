@@ -263,43 +263,7 @@
   opacity: 0.8;
 }
 
-/* ── Modal Styles ───────────────────────────────────────────── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(3px);
-}
-
-.modal-card {
-  position: relative;
-  background: white;
-  border-radius: 14px;
-  padding: 36px 32px;
-  max-width: 420px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  text-align: center;
-}
-
-.modal-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 18px;
-}
+/* ── Details Modal ────────────────────────────────────────── */
 
 /* ── Details Modal ────────────────────────────────────────── */
 .details-card {
@@ -393,59 +357,7 @@
   justify-content: center;
 }
 
-/* ── Modal Typography & Actions ── */
-.modal-title-text {
-  margin: 0 0 10px;
-  font-size: 1.2rem;
-  color: var(--text-main);
-}
-
-.modal-desc-text {
-  margin: 0 0 28px;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-.modal-action-row {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.btn-modal-cancel {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: transparent;
-  color: var(--text-main);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-modal-cancel:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.btn-modal-confirm {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 8px;
-  border: none;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-modal-confirm:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+/* ── Details Specifics ── */
 
 /* ── Details Specifics ── */
 .details-user-info {

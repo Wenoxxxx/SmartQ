@@ -162,6 +162,7 @@ session_start();
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Auto-hide alerts
       const alerts = document.querySelectorAll('.auth-alert');
       alerts.forEach(alert => {
         setTimeout(() => {
@@ -170,11 +171,17 @@ session_start();
         }, 4000);
       });
 
-      if (password.value !== confirmPassword.value) {
-        event.preventDefault(); // stop form submission
-        alert("Passwords do not match!");
-      }
+      // Client-side validation
+      const form = document.querySelector('form');
+      const password = document.querySelector('input[name="password"]');
+      const confirm = document.querySelector('input[name="confirm_password"]');
 
+      form.addEventListener('submit', (e) => {
+        if (password.value !== confirm.value) {
+          e.preventDefault();
+          alert("Passwords do not match!");
+        }
+      });
     });
   </script>
 </body>

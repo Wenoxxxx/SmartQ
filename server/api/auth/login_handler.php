@@ -15,8 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $db = $database->getConnection();
 
         // 1. Try checking Admin table (STRICT: email only for admin)
-        $query = "SELECT amdin_id as id, first_name, last_name, email, profile_image, admin_pass as password FROM admin 
-                  WHERE email = :input OR amdin_id = :input LIMIT 1";
+        $query = "SELECT admin_id as id, first_name, last_name, email, profile_image, admin_pass as password FROM admin 
+                  WHERE email = :input OR admin_id = :input LIMIT 1";
         $stmt = $db->prepare($query);
         $stmt->bindParam(':input', $login_input);
         $stmt->execute();

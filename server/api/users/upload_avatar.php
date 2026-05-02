@@ -66,7 +66,7 @@ if (move_uploaded_file($file['tmp_name'], $target_path)) {
             $_SESSION['student']['profile_image'] = $db_path;
         } else if (isset($_SESSION['admin'])) {
             $admin_id = $_SESSION['admin']['id'];
-            $query = "UPDATE admin SET profile_image = :img WHERE amdin_id = :id";
+            $query = "UPDATE admin SET profile_image = :img WHERE admin_id = :id";
             $stmt = $db->prepare($query);
             $stmt->bindParam(':img', $db_path);
             $stmt->bindParam(':id', $admin_id);
