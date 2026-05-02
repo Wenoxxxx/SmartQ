@@ -426,8 +426,8 @@
   }
 
   .hero-welcome h1 {
-    font-size: 1.75rem !important;
-    letter-spacing: -1px !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 5px !important;
   }
 
   .hero-welcome h1 span {
@@ -436,10 +436,10 @@
   }
 
   .hero-welcome p {
-    font-size: 0.9rem !important;
-    max-width: 100%;
+    font-size: 0.8rem !important;
+    opacity: 0.8;
   }
-
+  
   .hero-status-card {
     width: 100%;
     padding: 16px !important;
@@ -448,6 +448,18 @@
   .student-stats-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 10px !important;
+  }
+
+  .stat-card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  .stat-card-value {
+    font-size: 1.1rem !important;
+  }
+  .stat-card-label {
+    font-size: 0.7rem !important;
   }
 
   .queue-highlight {
@@ -472,7 +484,7 @@
   }
 
   .queue-details h4 {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
 
   .queue-details p {
