@@ -9,7 +9,6 @@
 
 > *Because queues should be smart, not stressful.*
 
-[**📖 View the User Manual (Student & Admin Guide)**](./MANUAL.md)
 
 ---
 
@@ -73,12 +72,28 @@ git clone https://github.com/Wenoxxxx/SmartQ.git
 - Open **phpMyAdmin** (`localhost/phpmyadmin`).
 - Create a new database named `smartq_db`.
 - Import the provided SQL file (if available) or run the migration scripts in `scratch/`.
-- Configure your database credentials in `server/config/database.php`.
 
-### 4. Running the App
+### 4. Environment Configuration (`.env`)
+SmartQ uses environment variables for secure configuration. 
+- Copy `.env.example` to a new file named `.env` in the root directory.
+- Update the following values in your `.env` file:
+  - **Database:** Set your `DB_USER` and `DB_PASS`.
+  - **Email:** If you want to enable email notifications, provide your `SMTP_USER` and `SMTP_PASS` (e.g., a Google App Password).
+
+### 5. Running the App
 - Move the `SmartQ` folder to your `htdocs` directory.
 - Start Apache and MySQL from your XAMPP Control Panel.
 - Access the landing page at `http://localhost/SmartQ/client/index.php`.
+
+---
+
+## 📖 Documentation & Support
+
+For detailed guides on how to use the system as a student or administrator, please refer to our manual:
+
+👉 [**SmartQ User Manual (Student & Admin Guide)**](./MANUAL.md)
+
+If you encounter any issues, feel free to use the "Get in Touch" form on the landing page.
 
 ---
 
