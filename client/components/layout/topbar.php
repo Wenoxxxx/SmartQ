@@ -207,13 +207,29 @@ if ($is_student_page && $student_data) {
         success: function (response) {
           $container.removeClass('uploading');
           if (response.success) {
-            // Re-render the avatar part
+            // Re-render the topbar avatar
             $container.html(`
               <img src="${response.avatar_url}" alt="Avatar" class="avatar-img" id="current-avatar">
               <div class="avatar-overlay">
                 <i class="fas fa-camera"></i>
               </div>
             `);
+            
+            // Also update the main profile page avatar if we are on profile.php
+            const $mainProfile = $('#profile-avatar-main');
+            if ($mainProfile.length > 0) {
+              if ($('#profile-img-preview').length > 0) {
+                $('#profile-img-preview').attr('src', response.avatar_url);
+              } else {
+                $mainProfile.html(`
+                  <img src="${response.avatar_url}" alt="Profile" id="profile-img-preview" style="width: 100%; height: 100%; object-fit: cover;">
+                  <div class="avatar-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;">
+                    <i class="fas fa-camera" style="color: white; font-size: 1.5rem;"></i>
+                  </div>
+                `);
+              }
+            }
+            
             alert('Profile picture updated successfully!');
           } else {
             alert('Error: ' + response.message);

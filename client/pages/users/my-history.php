@@ -43,6 +43,7 @@ $history = $q_stmt->fetchAll(PDO::FETCH_ASSOC);
   <meta name="component-base" content="../../components/">
   <link rel="stylesheet" href="../../assets/css/main.css">
   <link rel="stylesheet" href="../../assets/css/components/components.css">
+  <link rel="stylesheet" href="../../assets/css/components/navigation.css">
   <link rel="stylesheet" href="../../assets/css/users/student-dashboard.css">
   <title>SmartQ | My History</title>
 </head>
@@ -55,6 +56,13 @@ $history = $q_stmt->fetchAll(PDO::FETCH_ASSOC);
         data-props='{"title":"My History", "description":"View your validation and queue history."}'></div>
       <main class="admin-content">
         <div class="student-container">
+
+          <a href="student-dashboard.php" class="btn-nav-back" style="margin-bottom: 20px; display: inline-flex;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Dashboard
+          </a>
 
           <!-- ── History Hero / Status Summary ── -->
           <div class="student-hero"

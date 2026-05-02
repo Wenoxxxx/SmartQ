@@ -89,26 +89,96 @@ if ($type === 'filtered') {
         fputcsv($output, $row);
     }
 
-} elseif ($type === 'general_percent') {
-    // ── General Percentage Report ──
-    $sql = "SELECT 
-            (SELECT COUNT(*) FROM students) as total,
-            (SELECT COUNT(*) FROM students s JOIN validation_status vs ON s.status_id = vs.status_id WHERE vs.status_name = 'Validated') as validated,
-            (SELECT COUNT(*) FROM students s JOIN validation_status vs ON s.status_id = vs.status_id WHERE vs.status_name = 'Pending') as pending,
-            (SELECT COUNT(*) FROM students s JOIN validation_status vs ON s.status_id = vs.status_id WHERE vs.status_name = 'Not Validated') as not_validated";
+} elseif ($type === 'college_specific') {
+    // ── Detailed Report for Specific College ──
+    $college_id = isset($_GET['college_id']) ? $_GET['college_id'] : '';
+    $sql = "SELECT s.student_id, s.first_name, s.last_name, s.email, s.yearlvl, c.college_name, vs.status_name, s.validated_at, s.validated_by 
+            FROM students s
+            LEFT JOIN colleges c ON s.college_id = c.college_id
+            LEFT JOIN validation_status vs ON s.status_id = vs.status_id
+            WHERE s.college_id = :cid
+            ORDER BY s.last_name ASC, s.first_name ASC";
+    
+    fputcsv($output, ['College', 'Student ID', 'First Name', 'Last Name', 'Email', 'Year Level', 'Status', 'Validated At', 'Validated By']);
     
     $stmt = $db->prepare($sql);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->execute([':cid' => $college_id]);
     
-    fputcsv($output, ['Metric', 'Count', 'Percentage']);
+    $year_labels = [1 => '1st Year', 2 => '2nd Year', 3 => '3rd Year', 4 => '4th Year'];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $row['yearlvl'] = $year_labels[$row['yearlvl']] ?? $row['yearlvl'] . 'th Year';
+        fputcsv($output, $row);
+    }
+
+} elseif ($type === 'comparison_summary') {
+    // ── Validation Summary & Comparison Report ──
     
-    $total = $row['total'] ?: 1; // Avoid division by zero
+    // 1. Overall Summary
+    $sql_overall = "SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN vs.status_name = 'Validated' THEN 1 ELSE 0 END) as validated,
+        SUM(CASE WHEN vs.status_name = 'Pending' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN vs.status_name = 'Not Validated' THEN 1 ELSE 0 END) as not_validated
+        FROM students s LEFT JOIN validation_status vs ON s.status_id = vs.status_id";
+    $stmt = $db->query($sql_overall);
+    $overall = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total = $overall['total'] ?: 1;
     
-    fputcsv($output, ['Validated', $row['validated'], round(($row['validated'] / $total) * 100, 2) . '%']);
-    fputcsv($output, ['Pending', $row['pending'], round(($row['pending'] / $total) * 100, 2) . '%']);
-    fputcsv($output, ['Not Validated', $row['not_validated'], round(($row['not_validated'] / $total) * 100, 2) . '%']);
-    fputcsv($output, ['Total Students', $row['total'], '100%']);
+    fputcsv($output, ['--- OVERALL VALIDATION SUMMARY ---']);
+    fputcsv($output, ["{$overall['validated']} out of {$overall['total']} students are Validated (" . round(($overall['validated']/$total)*100, 2) . "%)"]);
+    fputcsv($output, ["{$overall['not_validated']} out of {$overall['total']} students are Not Validated (" . round(($overall['not_validated']/$total)*100, 2) . "%)"]);
+    fputcsv($output, ["{$overall['pending']} out of {$overall['total']} students are Pending (" . round(($overall['pending']/$total)*100, 2) . "%)"]);
+    fputcsv($output, []);
+
+    // 2. College Comparison
+    fputcsv($output, ['--- COLLEGE COMPARISON ---']);
+    fputcsv($output, ['College', 'Total Students', 'Validated', 'Pending', 'Not Validated', 'Validation Rate']);
+    
+    $sql_college = "SELECT 
+        c.college_name,
+        COUNT(s.student_id) as total,
+        SUM(CASE WHEN vs.status_name = 'Validated' THEN 1 ELSE 0 END) as validated,
+        SUM(CASE WHEN vs.status_name = 'Pending' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN vs.status_name = 'Not Validated' THEN 1 ELSE 0 END) as not_validated
+        FROM colleges c
+        LEFT JOIN students s ON c.college_id = s.college_id
+        LEFT JOIN validation_status vs ON s.status_id = vs.status_id
+        GROUP BY c.college_id, c.college_name
+        ORDER BY c.college_name ASC";
+    
+    $stmt = $db->query($sql_college);
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $c_total = $row['total'] ?: 1;
+        $rate = round(($row['validated'] / $c_total) * 100, 2) . '%';
+        if ($row['total'] == 0) $rate = 'N/A';
+        fputcsv($output, [$row['college_name'], $row['total'], $row['validated'] ?: 0, $row['pending'] ?: 0, $row['not_validated'] ?: 0, $rate]);
+    }
+    fputcsv($output, []);
+
+    // 3. Year Level Comparison
+    fputcsv($output, ['--- YEAR LEVEL COMPARISON ---']);
+    fputcsv($output, ['Year Level', 'Total Students', 'Validated', 'Pending', 'Not Validated', 'Validation Rate']);
+    
+    $sql_year = "SELECT 
+        s.yearlvl,
+        COUNT(s.student_id) as total,
+        SUM(CASE WHEN vs.status_name = 'Validated' THEN 1 ELSE 0 END) as validated,
+        SUM(CASE WHEN vs.status_name = 'Pending' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN vs.status_name = 'Not Validated' THEN 1 ELSE 0 END) as not_validated
+        FROM students s
+        LEFT JOIN validation_status vs ON s.status_id = vs.status_id
+        GROUP BY s.yearlvl
+        ORDER BY s.yearlvl ASC";
+        
+    $stmt = $db->query($sql_year);
+    $year_labels = [1 => '1st Year', 2 => '2nd Year', 3 => '3rd Year', 4 => '4th Year'];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if (!$row['yearlvl']) continue;
+        $y_total = $row['total'] ?: 1;
+        $rate = round(($row['validated'] / $y_total) * 100, 2) . '%';
+        $label = $year_labels[$row['yearlvl']] ?? $row['yearlvl'] . 'th Year';
+        fputcsv($output, [$label, $row['total'], $row['validated'] ?: 0, $row['pending'] ?: 0, $row['not_validated'] ?: 0, $rate]);
+    }
 }
 
 fclose($output);
