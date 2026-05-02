@@ -15,16 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $student_id = $_SESSION['student']['student_id'];
-$first_name = trim($_POST['first_name'] ?? '');
-$last_name = trim($_POST['last_name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$yearlvl = trim($_POST['yearlvl'] ?? '');
-$college_id = trim($_POST['college_id'] ?? '');
 $new_password = $_POST['new_password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
 
-if (empty($first_name) || empty($last_name) || empty($email)) {
-    echo json_encode(['success' => false, 'message' => 'First name, last name, and email are required']);
+// Personal info is read-only for students, so we don't process it from $_POST
+// We only allow password updates as per requirements.
+
+if (empty($new_password)) {
+    echo json_encode(['success' => false, 'message' => 'Please enter a new password to update your profile.']);
+    exit;
+}
+
+if ($new_password !== $confirm_password) {
+    echo json_encode(['success' => false, 'message' => 'Passwords do not match']);
     exit;
 }
 
@@ -32,59 +35,17 @@ try {
     $database = new Database();
     $db = $database->getConnection();
 
-    // Check if email is already taken by another student
-    $checkEmailQuery = "SELECT student_id FROM students WHERE email = :email AND student_id != :sid";
-    $ceStmt = $db->prepare($checkEmailQuery);
-    $ceStmt->bindParam(':email', $email);
-    $ceStmt->bindParam(':sid', $student_id);
-    $ceStmt->execute();
-    if ($ceStmt->rowCount() > 0) {
-        echo json_encode(['success' => false, 'message' => 'Email is already in use by another student']);
-        exit;
-    }
-
-    // Build the update query
-    $sql = "UPDATE students SET 
-            first_name = :first_name, 
-            last_name = :last_name, 
-            email = :email, 
-            yearlvl = :yearlvl, 
-            college_id = :college_id";
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
     
-    $params = [
-        ':first_name' => $first_name,
-        ':last_name' => $last_name,
-        ':email' => $email,
-        ':yearlvl' => $yearlvl,
-        ':college_id' => $college_id,
-        ':sid' => $student_id
-    ];
-
-    if (!empty($new_password)) {
-        if ($new_password !== $confirm_password) {
-            echo json_encode(['success' => false, 'message' => 'Passwords do not match']);
-            exit;
-        }
-        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $sql .= ", student_pass = :password";
-        $params[':password'] = $hashed_password;
-    }
-
-    $sql .= " WHERE student_id = :sid";
-
+    $sql = "UPDATE students SET student_pass = :password WHERE student_id = :sid";
     $stmt = $db->prepare($sql);
+    $stmt->bindParam(':password', $hashed_password);
+    $stmt->bindParam(':sid', $student_id);
     
-    if ($stmt->execute($params)) {
-        // Update session data
-        $_SESSION['student']['first_name'] = $first_name;
-        $_SESSION['student']['last_name'] = $last_name;
-        $_SESSION['student']['email'] = $email;
-        $_SESSION['student']['yearlvl'] = $yearlvl;
-        $_SESSION['student']['college_id'] = $college_id;
-
-        echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
+        echo json_encode(['success' => false, 'message' => 'Failed to update password']);
     }
 
 } catch (Exception $e) {

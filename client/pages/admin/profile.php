@@ -135,11 +135,34 @@ $adminId = $admin['id'] ?? 'N/A';
     $(document).ready(function () {
       $('#profileForm').on('submit', function (e) {
         e.preventDefault();
-        alert('Your changes have been saved successfully!');
+        const formData = $(this).serialize();
+        const $btn = $('.btn-save');
+
+        $btn.prop('disabled', true).text('Updating...');
+
+        $.ajax({
+          url: '../../../server/api/admin/update_profile.php',
+          type: 'POST',
+          data: formData,
+          dataType: 'json',
+          success: function (response) {
+            if (response.success) {
+              alert('Profile updated successfully!');
+              location.reload(); // Refresh to update Topbar and Sidebar info
+            } else {
+              alert('Error: ' + response.message);
+              $btn.prop('disabled', false).text('Save Changes');
+            }
+          },
+          error: function () {
+            alert('An error occurred while updating the profile.');
+            $btn.prop('disabled', false).text('Save Changes');
+          }
+        });
       });
 
       // Handle Profile Picture Upload Trigger
-      $('#profile-avatar-main').on('click', function() {
+      $('#profile-avatar-main').on('click', function () {
         $('#avatar-upload').click();
       });
     });

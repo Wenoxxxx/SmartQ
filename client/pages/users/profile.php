@@ -18,6 +18,23 @@ $college_query = "SELECT * FROM colleges ORDER BY college_name ASC";
 $college_stmt = $db->prepare($college_query);
 $college_stmt->execute();
 $colleges = $college_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get current college name and year text for display
+$current_college_name = 'N/A';
+foreach ($colleges as $college) {
+  if ($college['college_id'] == $user['college_id']) {
+    $current_college_name = $college['college_name'];
+    break;
+  }
+}
+
+$year_mapping = [
+  1 => '1st Year',
+  2 => '2nd Year',
+  3 => '3rd Year',
+  4 => '4th Year'
+];
+$current_year_text = $year_mapping[$user['yearlvl']] ?? ($user['yearlvl'] ? $user['yearlvl'] . 'th Year' : 'N/A');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,22 +126,11 @@ $colleges = $college_stmt->fetchAll(PDO::FETCH_ASSOC);
               </div>
               <div class="form-group">
                 <label>Year Level</label>
-                <select class="form-input form-select disabled-field" name="yearlvl" disabled>
-                  <option value="1" <?php echo ($user['yearlvl'] == 1) ? 'selected' : ''; ?>>1st Year</option>
-                  <option value="2" <?php echo ($user['yearlvl'] == 2) ? 'selected' : ''; ?>>2nd Year</option>
-                  <option value="3" <?php echo ($user['yearlvl'] == 3) ? 'selected' : ''; ?>>3rd Year</option>
-                  <option value="4" <?php echo ($user['yearlvl'] == 4) ? 'selected' : ''; ?>>4th Year</option>
-                </select>
+                <input type="text" class="form-input readonly-field" value="<?= htmlspecialchars($current_year_text) ?>" readonly>
               </div>
               <div class="form-group">
                 <label>College</label>
-                <select class="form-input form-select disabled-field" name="college_id" disabled>
-                  <?php foreach ($colleges as $college): ?>
-                    <option value="<?php echo $college['college_id']; ?>" <?php echo ($user['college_id'] == $college['college_id']) ? 'selected' : ''; ?>>
-                      <?php echo htmlspecialchars($college['college_name']); ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
+                <input type="text" class="form-input readonly-field" value="<?= htmlspecialchars($current_college_name) ?>" readonly>
               </div>
             </div>
 
