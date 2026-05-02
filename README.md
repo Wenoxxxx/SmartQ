@@ -9,6 +9,8 @@
 
 > *Because queues should be smart, not stressful.*
 
+[**📖 View the User Manual (Student & Admin Guide)**](./MANUAL.md)
+
 ---
 
 ## ✨ Key Features
