@@ -19,39 +19,8 @@ if (!isset($_SESSION['admin'])) {
   <!-- Stylesheets -->
   <link rel="stylesheet" href="../../assets/css/main.css">
   <link rel="stylesheet" href="../../assets/css/components/components.css">
+  <link rel="stylesheet" href="../../assets/css/components/navigation.css">
   <link rel="stylesheet" href="../../assets/css/admin/queue.css">
-
-  <style>
-    .btn-archive-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      color: #64748b;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .btn-archive-toggle:hover {
-      background: #f1f5f9;
-      color: var(--primary-color);
-      border-color: var(--primary-color)20;
-      transform: translateY(-1px);
-    }
-
-    .btn-archive-toggle svg {
-      transition: transform 0.2s;
-    }
-
-    .btn-archive-toggle:hover svg {
-      transform: translateX(-2px);
-    }
-  </style>
 
   <title>SmartQ | Queue Management</title>
 </head>
@@ -110,14 +79,14 @@ if (!isset($_SESSION['admin'])) {
             </div>
             <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
               <?php if ($showArchived): ?>
-                <a href="?view=active" class="btn-archive-toggle">
+                <a href="?view=active" class="btn-nav-back">
                   <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                   </svg>
                   Back to Active
                 </a>
               <?php else: ?>
-                <a href="?view=archived" class="btn-archive-toggle">
+                <a href="?view=archived" class="btn-nav-back">
                   <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                   </svg>
@@ -226,8 +195,15 @@ if (!isset($_SESSION['admin'])) {
 '; ?>
                   <?php
                   if ($status === 'active') {
-                    echo '<a href="manage-queue.php?id=' . $row['schedule_id'] . '" class="btn-manage" style="text-align: center; text-decoration: none; flex: 1; min-width: 100px;">Manage</a>
-                                   <button class="btn-cancel-schedule" data-id="' . $row['schedule_id'] . '" style="background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; flex: 1; min-width: 100px;">Cancel</button>';
+                    if (!$showArchived) {
+                      echo '<div style="display: flex; flex-direction: column; width: 100%; gap: 10px;">
+                              <div style="display: flex; gap: 10px; width: 100%;">
+                                <a href="manage-queue.php?id=' . $row['schedule_id'] . '" class="btn-manage" style="text-align: center; text-decoration: none; flex: 1; min-width: 100px; display: flex; align-items: center; justify-content: center;">Manage</a>
+                                <button class="btn-archive-schedule" data-id="' . $row['schedule_id'] . '" style="background: #f1f5f9; color: #64748b; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1; min-width: 100px;">Archive</button>
+                              </div>
+                              <button class="btn-cancel-schedule" data-id="' . $row['schedule_id'] . '" style="width: 100%; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;">Cancel Schedule</button>
+                            </div>';
+                    }
                   } elseif ($status === 'cancelled' || $status === 'closed') {
                     echo '<div style="display: flex; flex-direction: column; width: 100%; gap: 10px;">
                                     <div style="display: flex; gap: 10px; width: 100%;">
@@ -530,6 +506,8 @@ if (!isset($_SESSION['admin'])) {
             $btn.prop('disabled', false).text('Restore Schedule');
           }
         });
+      });
+
       // Handle Permanent Delete Schedule
       $(document).on('click', '.btn-delete-permanent', function () {
         const id = $(this).data('id');

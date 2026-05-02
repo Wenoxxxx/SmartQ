@@ -19,6 +19,7 @@ if (!isset($_SESSION['admin'])) {
   <!-- Stylesheets -->
   <link rel="stylesheet" href="../../assets/css/main.css">
   <link rel="stylesheet" href="../../assets/css/components/components.css">
+  <link rel="stylesheet" href="../../assets/css/components/navigation.css">
   <link rel="stylesheet" href="../../assets/css/admin/students.css">
   <link rel="stylesheet" href="../../assets/css/admin/queue.css">
 
@@ -41,10 +42,9 @@ if (!isset($_SESSION['admin'])) {
         <div class="manage-container">
 
           <!-- ── Back & Header ── -->
-          <a href="queue.php" class="btn-back">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
+          <a href="queue.php" class="btn-nav-back" style="margin-bottom: 20px;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
             Back to Schedules
           </a>
