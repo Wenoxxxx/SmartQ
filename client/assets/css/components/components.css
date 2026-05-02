@@ -681,15 +681,16 @@
   }
 
   .topbar {
-    padding: 12px 15px !important;
+    padding: 8px 12px !important;
+    min-height: 50px;
   }
 
   .topbar-title {
-    font-size: 1.1rem !important;
+    font-size: 0.95rem !important;
   }
 
   .topbar-subtitle {
-    font-size: 0.75rem !important;
+    display: none !important;
   }
 
   .topbar-search input {
