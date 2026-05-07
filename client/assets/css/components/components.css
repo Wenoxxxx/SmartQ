@@ -170,20 +170,28 @@
 .topbar-content {
   display: flex;
   flex-direction: column;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 20px;
+  margin-left: -5px; /* Offset to feel more balanced with the border */
 }
 
 .topbar-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-main);
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #1e293b;
   margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .topbar-subtitle {
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: #64748b;
   margin-top: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .topbar-actions {
@@ -703,7 +711,13 @@
   }
 
   .topbar-title {
-    font-size: 0.95rem !important;
+    font-size: 1.1rem !important;
+  }
+
+  .topbar-content {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
   }
 
   .topbar-subtitle {

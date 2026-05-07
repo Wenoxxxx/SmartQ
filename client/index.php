@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/landing.css">
+  <link rel="stylesheet" href="assets/css/landing.css?v=1.2">
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -33,6 +33,10 @@
         <a href="#how-it-works">How it Works</a>
         <a href="#team">Team</a>
         <a href="#contact">Contact</a>
+        <div class="mobile-only-links">
+          <a href="pages/login.php" class="btn-mobile-login">Login</a>
+          <a href="pages/signup.php" class="btn-mobile-signup">Get Started</a>
+        </div>
       </div>
 
       <div class="nav-actions">
@@ -69,6 +73,7 @@
             <a href="pages/signup.php" class="btn-main btn-primary">
               Start Your Journey <i class="fas fa-arrow-right"></i>
             </a>
+            <a href="pages/login.php" class="btn-main btn-login-hero">Login to Account</a>
             <a href="#about" class="btn-main btn-secondary">Explore Features</a>
           </div>
 
@@ -210,10 +215,12 @@
               <p class="description">Designs clean, user-friendly interfaces with a focus on detail and intuitive
                 design.</p>
               <div class="team-socials">
-                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401102451@student.buksu.edu.ph" title="Copy Email">
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401102451@student.buksu.edu.ph"
+                  title="Copy Email">
                   <i class="fas fa-envelope"></i>
                 </a>
-                <a href="https://www.facebook.com/althiyahasil" target="_blank" class="social-dot"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.facebook.com/althiyahasil" target="_blank" class="social-dot"><i
+                    class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>
@@ -228,7 +235,8 @@
               <span class="role">System Analyst</span>
               <p class="description">Analyzes systems and ensures efficient workflow throughout the system design. </p>
               <div class="team-socials">
-                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401107938@student.buksu.edu.ph" title="Copy Email">
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401107938@student.buksu.edu.ph"
+                  title="Copy Email">
                   <i class="fas fa-envelope"></i>
                 </a>
                 <a href="https://www.facebook.com/alejandra.barcelona26" target="_blank" class="social-dot"><i
@@ -247,7 +255,8 @@
               <span class="role">Hustler</span>
               <p class="description">Drives project success through strong teamwork and effective coordination.</p>
               <div class="team-socials">
-                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401110883@student.buksu.edu.ph" title="Copy Email">
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401110883@student.buksu.edu.ph"
+                  title="Copy Email">
                   <i class="fas fa-envelope"></i>
                 </a>
                 <a href="https://www.facebook.com/yohgie.diayon" target="_blank" class="social-dot"><i
@@ -266,10 +275,12 @@
               <span class="role">Project Lead / Developer</span>
               <p class="description">Leads development with clean, efficient code and ensures system reliability.</p>
               <div class="team-socials">
-                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401111022@student.buksu.edu.ph" title="Copy Email">
+                <a href="javascript:void(0)" class="social-dot copy-email" data-email="2401111022@student.buksu.edu.ph"
+                  title="Copy Email">
                   <i class="fas fa-envelope"></i>
                 </a>
-                <a href="https://www.facebook.com/wenoxj" target="_blank" class="social-dot"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.facebook.com/wenoxj" target="_blank" class="social-dot"><i
+                    class="fab fa-facebook-f"></i></a>
               </div>
             </div>
           </div>

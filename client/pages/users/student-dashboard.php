@@ -229,7 +229,7 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
           <!-- ── Action Grid ── -->
           <div class="student-grid">
 
-            <!-- Book Validation -->
+            <!-- Queue Booking -->
             <div class="student-card">
               <div class="card-icon">
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -239,8 +239,8 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
                   <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
               </div>
-              <h3 class="card-title">Book Validation</h3>
-              <p class="card-desc">Check available time slots and book your validation schedule to avoid long lines.</p>
+              <h3 class="card-title">Queue</h3>
+              <p class="card-desc">Check available time slots and book your validation schedule to secure your position.</p>
               <a href="book-queue.php" class="btn-student">Browse Slots</a>
             </div>
 
@@ -255,19 +255,6 @@ $current_status = $status_map[$status_id] ?? $status_map[2];
               <h3 class="card-title">My History</h3>
               <p class="card-desc">View your previous validation logs and queue history for this semester.</p>
               <a href="my-history.php" class="btn-student">View History</a>
-            </div>
-
-            <!-- Profile Settings -->
-            <div class="student-card">
-              <div class="card-icon">
-                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-              <h3 class="card-title">My Profile</h3>
-              <p class="card-desc">Update your personal information and ensure your email is verified.</p>
-              <a href="profile.php" class="btn-student">Edit Profile</a>
             </div>
 
           </div>

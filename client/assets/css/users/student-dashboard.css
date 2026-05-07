@@ -107,6 +107,11 @@
   color: white;
 }
 
+.status-pill.closed {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
 /* ── Info Grid ── */
 .student-grid {
   display: grid;
@@ -250,6 +255,63 @@
   padding: 20px 24px;
   background: #f8fafc;
   border-top: 1px solid #f1f5f9;
+  margin-top: auto;
+}
+
+.schedule-card .card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.schedule-info-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+.schedule-details {
+  min-width: 0;
+}
+
+.schedule-details h4 {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.schedule-time {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.progress-section {
+  margin-top: 5px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .date-badge {
@@ -414,15 +476,15 @@
 .booking-card-empty {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 24px;
+  gap: 16px;
+  padding: 16px 20px;
 }
 
 .booking-empty-icon {
-  width: 56px;
-  height: 56px;
-  min-width: 56px;
-  border-radius: 16px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
   background: #f1f5f9;
   color: #94a3b8;
   display: flex;
@@ -435,28 +497,28 @@
 }
 
 .booking-empty-text h4 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
 }
 
 .booking-empty-text p {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #64748b;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .btn-book-now {
   display: inline-flex;
   align-items: center;
-  padding: 10px 24px;
+  padding: 8px 18px;
   background: var(--student-primary);
   color: white;
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   transition: all 0.2s;
   white-space: nowrap;
@@ -504,127 +566,215 @@
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    display: none !important;
-  }
-
-  .admin-main {
-    margin-left: 0 !important;
-    padding-bottom: 80px; /* Space for mobile nav */
-  }
-
-  .admin-content {
-    padding: 15px !important;
-  }
-
-  .topbar {
-    padding: 12px 15px !important;
-  }
-
   .student-container {
-    padding: 10px 5px;
-    gap: 15px;
+    padding: 10px;
+    gap: 12px;
   }
 
   .student-hero {
-    padding: 30px 20px !important;
+    padding: 24px 20px !important;
     border-radius: 20px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 25px !important;
+    gap: 15px !important;
+    margin-bottom: 10px;
   }
 
   .hero-welcome h1 {
-    font-size: 1.5rem !important;
-    margin-bottom: 5px !important;
+    font-size: 1.3rem !important;
+    margin-bottom: 4px !important;
   }
 
   .hero-welcome h1 span {
-    font-size: 1.75rem !important;
-    padding: 2px 12px !important;
+    font-size: 1.5rem !important;
+    padding: 0 8px !important;
+    display: inline-block;
   }
 
   .hero-welcome p {
     font-size: 0.8rem !important;
-    opacity: 0.8;
+    max-width: 100%;
+    margin-bottom: 0;
   }
   
   .hero-status-card {
     width: 100%;
-    padding: 16px !important;
+    padding: 12px 16px !important;
+    margin-top: 5px;
   }
 
-  .student-stats-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-  }
-
-  .stat-card-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
-  }
-  .stat-card-value {
-    font-size: 1.1rem !important;
-  }
-  .stat-card-label {
-    font-size: 0.7rem !important;
+  /* Compact Active Booking Card */
+  .booking-card {
+    border-radius: 16px;
   }
 
   .booking-card-top {
-    flex-wrap: wrap;
-    padding: 20px;
+    padding: 16px;
+    gap: 12px;
   }
 
   .booking-queue-number {
-    width: 56px;
-    height: 56px;
-    min-width: 56px;
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    border-radius: 12px;
+  }
+
+  .booking-queue-number .queue-label {
+    font-size: 0.5rem;
   }
 
   .booking-queue-number .queue-value {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
+  }
+
+  .booking-title {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
   }
 
   .booking-meta {
-    flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .btn-cancel-booking {
-    width: 100%;
-    padding: 12px;
-    font-size: 0.9rem;
+  .booking-meta-item {
+    font-size: 0.75rem;
+  }
+
+  .booking-card-status {
+    padding: 10px 16px;
+    font-size: 0.8rem;
   }
 
   .booking-card-empty {
-    flex-wrap: wrap;
-    padding: 20px;
+    padding: 12px 16px;
+    gap: 12px;
   }
 
-  .btn-book-now {
-    width: 100%;
-    justify-content: center;
-    padding: 12px;
+  .booking-empty-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
   }
 
+  .booking-empty-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 2x2 Grid for Actions */
   .student-grid {
-    grid-template-columns: 1fr !important;
-    gap: 15px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
   }
 
   .student-card {
-    padding: 20px !important;
+    padding: 16px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
 
-  /* Bottom Nav for Mobile */
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    display: none; /* Hide descriptions on mobile to save vertical space */
+  }
+
+  .btn-student {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    justify-content: center;
+  }
+
+  /* Dashboard Actions Grid - 2 columns */
+  .student-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Schedule Cards - Full width (Stacking) to fit horizontal content */
+  .schedule-card {
+    grid-column: 1 / -1 !important;
+  }
+
+  .schedule-card .card-body {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .schedule-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .schedule-info-group {
+    width: auto;
+    gap: 15px;
+  }
+
+  .schedule-details h4 {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .schedule-time {
+    font-size: 0.8rem;
+  }
+
+  .status-pill {
+    align-self: flex-start;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    margin-top: 0;
+  }
+
+  .progress-section {
+    margin-top: 0;
+  }
+
+  .progress-header {
+    font-size: 0.65rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .progress-value {
+    font-weight: 700;
+  }
+
+  .card-footer {
+    padding: 12px;
+  }
+
+  .card-footer button {
+    padding: 8px;
+    font-size: 0.75rem;
+  }
+
+  /* Mobile Nav */
   .mobile-nav {
     display: flex !important;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 70px;
+    height: 65px;
     background: #ffffff;
     border-top: 1px solid #f1f5f9;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
@@ -661,20 +811,13 @@
   }
 }
 
-/* Extra small screens */
 @media (max-width: 480px) {
-  .student-stats-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
   .hero-welcome h1 {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
   }
 
   .hero-welcome h1 span {
-    display: block;
-    width: fit-content;
-    margin-top: 5px;
+    font-size: 1.35rem !important;
   }
 }
 
@@ -700,6 +843,74 @@
 
 .queue-notif.notif-next span {
   color: #b45309 !important;
+}
+
+/* ── History List (Mobile) ── */
+.history-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+}
+
+.history-item-card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-item-date {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.history-item-time {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.history-item-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.queue-pill {
+  font-weight: 800;
+  color: var(--student-primary);
+  background: rgba(59, 130, 246, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .history-list {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
 }
 
 .notif-dot {

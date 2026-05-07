@@ -88,16 +88,18 @@ if ($is_admin_path && $admin_data) {
 
   <!-- Right: Actions Area -->
   <div class="topbar-actions">
-    <!-- Search Bar -->
-    <div class="topbar-search-wrapper">
-      <i class="fas fa-search"></i>
-      <input type="text" id="global-search" placeholder="Search services..." autocomplete="off">
+    <?php if ($user_role === 'Super Admin'): ?>
+      <!-- Search Bar -->
+      <div class="topbar-search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="global-search" placeholder="Search services..." autocomplete="off">
 
-      <!-- Search Results Dropdown -->
-      <div id="search-results" class="search-results-dropdown">
-        <!-- Results will be injected here -->
+        <!-- Search Results Dropdown -->
+        <div id="search-results" class="search-results-dropdown">
+          <!-- Results will be injected here -->
+        </div>
       </div>
-    </div>
+    <?php endif; ?>
 
     <!-- User Profile -->
     <div class="topbar-user-profile" id="user-menu">
@@ -138,54 +140,57 @@ if ($is_admin_path && $admin_data) {
       ];
     } else {
       services = [
-        { name: 'Student Dashboard', url: 'student-dashboard.php', icon: `<?= get_icon('dashboard.svg') ?>`, desc: 'View your queue status and validation info' },
-        { name: 'Book Validation', url: 'book-queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Schedule a validation appointment in the queue' },
+        { name: 'Dashboard', url: 'student-dashboard.php', icon: `<?= get_icon('dashboard.svg') ?>`, desc: 'View your queue status and validation info' },
+        { name: 'Queue', url: 'book-queue.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'Schedule a validation appointment in the queue' },
         { name: 'View History', url: 'my-history.php', icon: `<?= get_icon('queue.svg') ?>`, desc: 'View your past validation records' },
         { name: 'My Profile', url: 'profile.php', icon: `<?= get_icon('profile.svg') ?>`, desc: 'Update your personal details' },
       ];
     }
 
-    const $search = $('#global-search');
-    const $results = $('#search-results');
+    if (userRole === 'Super Admin') {
+      const $search = $('#global-search');
+      const $results = $('#search-results');
 
-    $search.on('input', function () {
-      const query = $(this).val().toLowerCase().trim();
-      $results.empty();
+      $search.on('input', function () {
+        const query = $(this).val().toLowerCase().trim();
+        $results.empty();
 
-      if (query.length < 1) {
-        $results.hide();
-        return;
-      }
+        if (query.length < 1) {
+          $results.hide();
+          return;
+        }
 
-      const filtered = services.filter(s =>
-        s.name.toLowerCase().includes(query) ||
-        s.desc.toLowerCase().includes(query)
-      );
+        const filtered = services.filter(s =>
+          s.name.toLowerCase().includes(query) ||
+          s.desc.toLowerCase().includes(query)
+        );
 
-      if (filtered.length > 0) {
-        filtered.forEach(s => {
-          $results.append(`
-            <a href="${s.url}" class="search-result-item">
-              <div class="result-icon">${s.icon}</div>
-              <div class="result-content">
-                <div class="result-name">${s.name}</div>
-                <div class="result-desc">${s.desc}</div>
-              </div>
-            </a>
-          `);
-        });
-        $results.show();
-      } else {
-        $results.append('<div class="search-no-results">No services found...</div>').show();
-      }
-    });
+        if (filtered.length > 0) {
+          filtered.forEach(s => {
+            $results.append(`
+              <a href="${s.url}" class="search-result-item">
+                <div class="result-icon">${s.icon}</div>
+                <div class="result-content">
+                  <div class="result-name">${s.name}</div>
+                  <div class="result-desc">${s.desc}</div>
+                </div>
+              </a>
+            `);
+          });
+          $results.show();
+        } else {
+          $results.append('<div class="search-no-results">No services found...</div>').show();
+        }
+      });
 
-    // Close dropdown when clicking outside
-    $(document).on('click', function (e) {
-      if (!$(e.target).closest('.topbar-search-wrapper').length) {
-        $results.hide();
-      }
-    });
+      // Close dropdown when clicking outside
+      $(document).on('click', function (e) {
+        if (!$(e.target).closest('.topbar-search-wrapper').length) {
+          $results.hide();
+        }
+      });
+    }
+
 
     // Avatar Upload Logic (Use Event Delegation)
     $(document).on('click', '#avatar-container', function (e) {
@@ -221,7 +226,7 @@ if ($is_admin_path && $admin_data) {
                 <i class="fas fa-camera"></i>
               </div>
             `);
-            
+
             // Also update the main profile page avatar if we are on profile.php
             const $mainProfile = $('#profile-avatar-main');
             if ($mainProfile.length > 0) {
@@ -236,7 +241,7 @@ if ($is_admin_path && $admin_data) {
                 `);
               }
             }
-            
+
             alert('Profile picture updated successfully!');
           } else {
             alert('Error: ' + response.message);

@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once "../../server/config/google_config.php";
 ?>
 
 <!DOCTYPE html>
@@ -12,6 +13,8 @@ session_start();
   <link rel="icon" type="image/png" href="../assets/logo/sq.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="../assets/css/login.css" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body class="auth-body">
@@ -83,8 +86,25 @@ session_start();
           </div>
         </div>
 
+        <div class="recaptcha-outer">
+          <div class="recaptcha-inner">
+            <div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
+          </div>
+        </div>
+
         <button type="submit" class="auth-btn">Login</button>
       </form>
+
+      <div class="google-auth-divider">Or continue with</div>
+
+      <div class="google-auth-container">
+        <div id="g_id_onload" data-client_id="<?php echo GOOGLE_CLIENT_ID; ?>"
+          data-callback="handleCredentialResponse" data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue" data-text="signin_with"
+          data-shape="pill" data-logo_alignment="left" data-width="100%">
+        </div>
+      </div>
 
       <hr class="auth-divider">
       <p class="auth-link"><a href="forgotpass.php">Forgot password?</a></p>
@@ -102,7 +122,66 @@ session_start();
           setTimeout(() => alert.remove(), 300);
         }, 4000);
       });
+
+      // Show reCAPTCHA when typing password
+      const passwordInput = document.querySelector('input[name="password"]');
+      const recaptchaContainer = document.querySelector('.recaptcha-outer');
+
+      if (passwordInput && recaptchaContainer) {
+        passwordInput.addEventListener('input', () => {
+          if (passwordInput.value.length >= 1) {
+            recaptchaContainer.classList.add('visible');
+          }
+        });
+
+        // Also show if field is already filled (e.g., autocomplete)
+        if (passwordInput.value.length >= 1) {
+          recaptchaContainer.classList.add('visible');
+        }
+      }
     });
+
+    function handleCredentialResponse(response) {
+      // Show loading state if needed
+      fetch('../../server/api/auth/google_handler.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          credential: response.credential
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '../../' + data.redirect;
+          } else {
+            showAlert(data.message, 'error');
+          }
+        })
+        .catch(err => {
+          showAlert('An error occurred during Google Sign-In.', 'error');
+        });
+    }
+
+    function showAlert(message, type) {
+      const alertContainer = document.querySelector('.auth-card-body');
+      const alert = document.createElement('div');
+      alert.className = `auth-alert auth-alert-${type}`;
+      alert.innerHTML = `
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+          <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+        </svg>
+        ${message}
+      `;
+      alertContainer.prepend(alert);
+      setTimeout(() => {
+        alert.classList.add('fade-out');
+        setTimeout(() => alert.remove(), 300);
+      }, 4000);
+    }
   </script>
 </body>
 

@@ -340,6 +340,81 @@ input[type=number] {
     margin: 18px 0 14px;
 }
 
+/* ── Google Auth Styling ── */
+.google-auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.google-auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 18px 0;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 100%;
+}
+
+.google-auth-divider::before,
+.google-auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+}
+
+.google-auth-divider:not(:empty)::before {
+    margin-right: 12px;
+}
+
+.google-auth-divider:not(:empty)::after {
+    margin-left: 12px;
+}
+
+/* ── reCAPTCHA Styling ── */
+.recaptcha-outer {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.recaptcha-outer.visible {
+    max-height: 100px;
+    opacity: 1;
+    margin: 12px 0 16px;
+}
+
+.recaptcha-inner {
+    transform: scale(0.9);
+    transform-origin: center;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+}
+
+@media (max-width: 400px) {
+    .recaptcha-inner {
+        transform: scale(0.85);
+    }
+}
+
+@media (max-width: 360px) {
+    .recaptcha-inner {
+        transform: scale(0.75);
+    }
+}
+
 /* ── Footer Links ── */
 .auth-link {
     font-size: 12.5px;

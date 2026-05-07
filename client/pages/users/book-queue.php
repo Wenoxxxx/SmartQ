@@ -17,7 +17,7 @@ $user = $_SESSION['student'];
   <link rel="stylesheet" href="../../assets/css/main.css">
   <link rel="stylesheet" href="../../assets/css/components/components.css">
   <link rel="stylesheet" href="../../assets/css/users/student-dashboard.css">
-  <title>SmartQ | Book Validation</title>
+  <title>SmartQ | Queue</title>
 </head>
 
 <body>
@@ -25,14 +25,14 @@ $user = $_SESSION['student'];
     <div data-component="sidebar" data-props='{"active":"book", "role":"student"}'></div>
     <div class="admin-main">
       <div data-component="topbar"
-        data-props='{"title":"Book Validation", "description":"Select a schedule to validate your ID."}'></div>
+        data-props='{"title":"Queue", "description":"Select a schedule to validate your ID."}'></div>
       <main class="admin-content">
         <div class="student-container">
           <!-- ── Booking Hero ── -->
           <div class="student-hero">
             <div class="hero-welcome">
-              <h1>Book Validation Slot</h1>
-              <p>Choose a convenient date and time to validate your ID.</p>
+              <h1>Queue <span>Booking</span></h1>
+              <p>Choose a convenient date and time to secure your validation slot.</p>
             </div>
             <div class="status-pill" style="margin-top: 0; background: rgba(255, 255, 255, 0.15);">
               <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
@@ -148,21 +148,21 @@ $user = $_SESSION['student'];
                   echo '
                     <div class="student-card schedule-card premium ' . $cardClass . '">
                       <div class="card-body">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 12px; flex-wrap: wrap;">
-                          <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
-                            <div class="date-badge" style="flex-shrink: 0;">
+                        <div class="schedule-header">
+                          <div class="schedule-info-group">
+                            <div class="date-badge">
                               <span class="day">' . $day . '</span>
                               <span class="month">' . $month . '</span>
                             </div>
-                            <div style="min-width: 0;">
-                              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' . $monthYear . '</h4>
-                              <p style="margin: 4px 0 0; font-size: 0.8rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <div class="schedule-details">
+                              <h4>' . $monthYear . '</h4>
+                              <p class="schedule-time">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                 ' . $timeSlot . '
                               </p>
                             </div>
                           </div>
-                          <span class="status-pill ' . ($available > 10 ? 'validated' : ($available > 0 ? 'pending' : 'not-validated')) . '" style="margin-top: 0; padding: 6px 12px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; height: fit-content;">
+                          <span class="status-pill ' . ($is_expired ? 'closed' : ($available > 10 ? 'validated' : ($available > 0 ? 'pending' : 'not-validated'))) . '">
                             ' . ($is_expired ? 'Closed' : ($available . ' Slots')) . '
                           </span>
                         </div>
@@ -202,14 +202,21 @@ $user = $_SESSION['student'];
                   }
 
                   echo '</div></div>';
+                  }
+                } else {
+                  echo '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: white; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                          <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <svg width="40" height="40" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24">
+                              <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                              <line x1="16" y1="2" x2="16" y2="6"></line>
+                              <line x1="8" y1="2" x2="8" y2="6"></line>
+                              <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                          </div>
+                          <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 1.4rem; font-weight: 800;">No Schedules Available</h3>
+                          <p style="color: #64748b; font-size: 1rem; max-width: 400px; margin: 0 auto; line-height: 1.6;">There are currently no active validation slots. Please check back later or contact your administrator.</p>
+                        </div>';
                 }
-              } else {
-                echo '<div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: white; border-radius: 32px; border: 2px dashed #e2e8f0; animation: slideDown 0.5s ease-out;">
-                        <div style="font-size: 5rem; margin-bottom: 24px;"></div>
-                        <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 1.6rem; font-weight: 800;">No Schedules Today</h3>
-                        <p style="color: #64748b; font-size: 1.1rem; max-width: 400px; margin: 0 auto;">Validation slots are currently closed. Please check again tomorrow morning for updates.</p>
-                      </div>';
-              }
           } catch (Exception $e) {
             echo '<div style="grid-column: 1/-1;" class="booking-alert warning">Error: ' . $e->getMessage() . '</div>';
           }
